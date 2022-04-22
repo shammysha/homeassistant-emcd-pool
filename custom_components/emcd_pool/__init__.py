@@ -12,7 +12,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 DOMAIN = "emcd_pool"
 
