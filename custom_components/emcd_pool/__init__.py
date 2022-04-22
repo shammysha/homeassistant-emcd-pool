@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 
 DOMAIN = "emcd_pool"
 
@@ -188,7 +188,7 @@ class EMCDPoolClient:
         self.response = None
         self.loop = loop or asyncio.get_event_loop()
 
-    def _get_headers(self) -> Dict:
+    def _get_headers(self):
         return {
             'Accept': 'application/json',
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',  # noqa
