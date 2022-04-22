@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.10"
+__version__ = "1.0.11"
 
 DOMAIN = "emcd_pool"
 
@@ -147,7 +147,7 @@ class EMCDData:
 
             _LOGGER.debug(f"Balances updated from emcd.io")
 
-        for coin in self.balances['accounts'][account]:
+        for coin in self.balances[account]:
 
             workers = await self.client.async_get_workers(coin)
             if workers:
