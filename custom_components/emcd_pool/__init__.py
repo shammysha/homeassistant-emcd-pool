@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.7"
+__version__ = "1.0.8"
 
 DOMAIN = "emcd_pool"
 
@@ -187,6 +187,19 @@ class EMCDPoolClient:
         self.session = self._init_session()
         self.response = None
         self.loop = loop or asyncio.get_event_loop()
+
+    @classmethod
+    async def create(cls, api_key: str, loop=None):
+
+        self = cls(api_key, loop)
+
+        try:
+            return self
+        except Exception:
+            # If ping throw an exception, the current self must be cleaned
+            # else, we can receive a "asyncio:Unclosed client session"
+            await self.close_connection()
+            raise
 
     def _get_headers(self):
         return {
