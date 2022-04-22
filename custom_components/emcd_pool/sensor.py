@@ -484,5 +484,5 @@ class EMCDPayoutsSensor(SensorEntity):
             if self._coin in self._emcd_data.payouts[self._account]:
                 self._prev = self._emcd_data.payouts[self._account][self._coin].get('previous', 0.00)
                 self._last = self._emcd_data.payouts[self._account][self._coin].get('last', 0.00)                
-         
+
         self._state = float(self._last)                
