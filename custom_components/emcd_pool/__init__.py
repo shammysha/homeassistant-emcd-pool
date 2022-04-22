@@ -12,7 +12,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 DOMAIN = "emcd_pool"
 
@@ -151,8 +151,8 @@ class EMCDData:
             workers = await self.client.async_get_workers(coin)
             if workers:
                 self.mining[account][coin] = {
-                    'status': workers['total_count']
-                    'hashrate': workers['total_hashrate']
+                    'status': workers['total_count'],
+                    'hashrate': workers['total_hashrate'],
                     'workers': workers['details']
                 }
 
@@ -173,7 +173,6 @@ class EMCDData:
                     self.payouts[account][coin]['last'] = payouts['payouts'][0]
                 if len(payouts['payouts']) > 1:
                     self.payouts[account][coin]['previous'] = payouts['payouts'][1]
-                }
 
                 _LOGGER.debug(f"Payouts updated from emcd.io")
 
