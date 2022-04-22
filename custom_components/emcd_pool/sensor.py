@@ -274,7 +274,7 @@ class EMCDStatusSensor(SensorEntity):
         self._state = self._hrate 
  
  
- class EMCDWorkerSensor(SensorEntity):
+class EMCDWorkerSensor(SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, emcd_data, name, coin, account, worker, hashrate, hashrate1h, hashrate24h, active):
@@ -328,8 +328,8 @@ class EMCDStatusSensor(SensorEntity):
             ATTR_STATUS_HRATE: f"{self._hrate}",
             ATTR_STATUS_HRATE1H: f"{self._hrate1h}",
             ATTR_STATUS_HRATE24H: f"{self._hrate24h}",
-            ATTR_WORKER_STATUS = "{}".format(self._status_vars[self._active] or self._status_vars[0])
-            ATTR_WORKER_WORKER = f"{self._worker}"            
+            ATTR_WORKER_STATUS: "{}".format(self._status_vars[self._active] or self._status_vars[0]),
+            ATTR_WORKER_WORKER: f"{self._worker}",
             ATTR_COIN: f"{self._coin}",
             ATTR_ACCOUNT: f"{self._account}" 
         }
