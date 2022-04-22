@@ -12,7 +12,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 DOMAIN = "emcd_pool"
 
@@ -124,7 +124,7 @@ class EMCDData:
 
         balances = await self.client.async_get_info()
         if not balances:
-            return
+            return False
 
         account = balances['username'];
 
