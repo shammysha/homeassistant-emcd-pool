@@ -149,7 +149,7 @@ class EMCDBalanceSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
@@ -225,7 +225,7 @@ class EMCDStatusSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
@@ -392,7 +392,7 @@ class EMCDRewardsSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
@@ -457,7 +457,7 @@ class EMCDPayoutsSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
