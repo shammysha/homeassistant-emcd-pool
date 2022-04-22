@@ -11,8 +11,8 @@ COIN_ICONS = {
     "LTC": "mdi:litecoin",
     "BCH": "mdi:bitcoin",
     "BSV": "mdi:bitcoin",
-    "ETH": "mdi:etherium",
-    "ETC": "mdi:etherium",
+    "ETH": "mdi:ethereum",
+    "ETC": "mdi:ethereum",
 }
 
 ATTRIBUTION = 'Data provided by EMCD'
@@ -119,7 +119,7 @@ class EMCDBalanceSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, balance, total_paid, min_payout, address):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) Info"
+        self._name = f"{name} {account} ({coin}) Info"
         self._coin = coin
         self._account = account
         self._balance = balance
@@ -192,7 +192,7 @@ class EMCDStatusSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, status, hashrate):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) Status"
+        self._name = f"{name} {account} ({coin}) Status"
         self._coin = coin
         self._account = account
         self._hrate = hashrate.get('hashrate', 0)
@@ -280,7 +280,7 @@ class EMCDWorkerSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, worker, hashrate, hashrate1h, hashrate24h, active):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name}.{worker} ({coin}) worker"
+        self._name = f"{name} {account}.{worker} ({coin}) worker"
         self._coin = coin
         self._account = account
         self._worker = worker
@@ -364,7 +364,7 @@ class EMCDRewardsSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, rewards):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) rewards"
+        self._name = f"{name} {account} ({coin}) rewards"
         self._coin = coin
         self._account = account
         self._prev = rewards.get('previous', 0.00)
@@ -429,7 +429,7 @@ class EMCDPayoutsSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, payouts):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) rewards"
+        self._name = f"{name} {account} ({coin}) rewards"
         self._coin = coin
         self._account = account
         self._prev = payouts.get('previous', 0.00)
