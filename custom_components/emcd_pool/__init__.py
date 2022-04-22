@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.9"
+__version__ = "1.0.10"
 
 DOMAIN = "emcd_pool"
 
@@ -139,7 +139,7 @@ class EMCDData:
             if coin in ['notifications', 'username']:
                 continue
 
-            for short_def, long_def in self.coins:
+            for short_def, long_def in self.coins.items():
                 if coin == long_def:
                     coin = short_def
 
