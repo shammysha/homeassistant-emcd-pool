@@ -5,6 +5,7 @@ import requests
 import time
 import logging
 import voluptuous as vol
+from datetime import timedelta
 from operator import itemgetter
 from urllib.parse import urlencode
 from homeassistant.const import CONF_API_KEY, CONF_NAME
@@ -12,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 DOMAIN = "emcd_pool"
 
