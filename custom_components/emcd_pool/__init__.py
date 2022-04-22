@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.11"
+__version__ = "1.0.12"
 
 DOMAIN = "emcd_pool"
 
@@ -236,7 +236,7 @@ class EMCDPoolClient:
 
     def _create_api_url(self, path: str, coin: str = None ) -> str:
         url = self.API_URL + '/' + self.API_VERSION
-        if not coin is None:
+        if coin:
             url += '/' + coin
         return url + '/' + path + '/' + self.API_KEY
 
