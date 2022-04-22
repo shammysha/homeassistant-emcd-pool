@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.12"
+__version__ = "1.0.13"
 
 DOMAIN = "emcd_pool"
 
@@ -253,25 +253,16 @@ class EMCDPoolClient:
         return answer
 
     async def async_get_info(self, path: str = 'info'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
+        return await self.async_request_api(path)
 
     async def async_get_workers(self, coin, path: str = 'workers'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
+        return await self.async_request_api(path, coin)
 
     async def async_get_rewards(self, coin, path: str = 'income'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
-
+        return await self.async_request_api(path, coin)
 
     async def async_get_payouts(self, coin, path: str = 'payouts'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
+        return await self.async_request_api(path, coin)
 
 
 
