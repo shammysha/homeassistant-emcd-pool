@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.14"
+__version__ = "1.0.15"
 
 DOMAIN = "emcd_pool"
 
@@ -61,7 +61,7 @@ async def async_setup(hass, config):
                 continue
 
             balance['account'] = account
-            balance['coin'] = coin.upper()
+            balance['coin'] = coin
             balance['name'] = name
 
             await async_load_platform(hass, "sensor", DOMAIN, balance, config)
@@ -70,7 +70,7 @@ async def async_setup(hass, config):
                 status = {
                     'name': name,
                     'account': account,
-                    'coin': coin.upper(),
+                    'coin': coin,
                     'status': emcd_data.mining[account][coin]['status'],
                     'hashrate': emcd_data.mining[account][coin]['hashrate']
                 }
@@ -80,13 +80,13 @@ async def async_setup(hass, config):
                 for worker in emcd_data.mining[account][coin]['workers']:
                     worker['name'] = name
                     worker['account'] = account
-                    worker['coin'] = coin.upper()
+                    worker['coin'] = coin
 
                     await async_load_platform(hass, "sensor", DOMAIN, worker, config)
 
             if coin in emcd_data.rewards:
                 rewards['account'] = account
-                rewards['coin'] = coin.upper()
+                rewards['coin'] = coin
                 rewards['name'] = name
                 rewards['rewards'] = emcd_data.rewards[account][coin]
 
@@ -94,7 +94,7 @@ async def async_setup(hass, config):
 
             if coin in emcd_data.rewards:
                 payouts['account'] = account
-                payouts['coin'] = coin.upper()
+                payouts['coin'] = coin
                 payouts['name'] = name
                 payouts['payouts'] = emcd_data.payouts[account][coin]
 
@@ -144,13 +144,13 @@ class EMCDData:
                 if coin == long_def:
                     coin = short_def
 
-            self.balances[account][coin] = data
+            self.balances[account][coin.upper()] = data
 
             _LOGGER.debug(f"Balances updated from emcd.io")
 
         for coin in self.balances[account]:
 
-            workers = await self.client.async_get_workers(coin)
+            workers = await self.client.async_get_workers(coin.lower())
             if workers:
                 self.mining[account][coin] = {
                     'status': workers['total_count'],
@@ -160,7 +160,7 @@ class EMCDData:
 
                 _LOGGER.debug(f"Workers updated from emcd.io")
 
-            rewards = await self.client.async_get_rewards(coin)
+            rewards = await self.client.async_get_rewards(coin.lower())
             if rewards and 'income' in rewards:
                 if len(rewards['income']) > 0:
                     self.rewards[account][coin]['last'] = (rewards['income'][0] or 0)
@@ -169,7 +169,7 @@ class EMCDData:
 
                 _LOGGER.debug(f"Rewards updated from emcd.io")
 
-            payouts = await self.client.async_get_payouts(coin)
+            payouts = await self.client.async_get_payouts(coin.lower())
             if payouts and 'payouts' in payouts:
                 if len(payouts['payouts']) > 0:
                     self.payouts[account][coin]['last'] = payouts['payouts'][0]
