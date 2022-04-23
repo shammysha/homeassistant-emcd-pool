@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.19"
+__version__ = "1.0.20"
 
 DOMAIN = "emcd_pool"
 
@@ -162,8 +162,10 @@ class EMCDData:
 
             rewards = await self.client.async_get_rewards(coin.lower())
             if rewards and 'income' in rewards:
+                self.rewards[account][coin] = {}
+                
                 if len(rewards['income']) > 0:
-                    self.rewards[account][coin]['last'] = (rewards['income'][0] or 0)
+                    self.rewards[account][coin]['last'] = rewards['income'][0]
                 if len(rewards['income']) > 1:
                     self.rewards[account][coin]['previous'] = rewards['income'][1]
 
@@ -171,6 +173,8 @@ class EMCDData:
 
             payouts = await self.client.async_get_payouts(coin.lower())
             if payouts and 'payouts' in payouts:
+                self.payouts[account][coin] = {}
+                                
                 if len(payouts['payouts']) > 0:
                     self.payouts[account][coin]['last'] = payouts['payouts'][0]
                 if len(payouts['payouts']) > 1:
