@@ -19,6 +19,8 @@ ATTRIBUTION = 'Data provided by EMCD'
 
 ATTR_COIN = "coin"
 ATTR_ACCOUNT = "account"
+ATTR_TIMESTAMP = "unix timestamp"
+ATTR_DATETIME = "datetime"
 
 ATTR_TOTAL_PAID = "total_paid"
 ATTR_BALANCE = "balance"
@@ -38,11 +40,12 @@ ATTR_STATUS_TOTAL_ALERTS = "All workers with alerts"
 ATTR_WORKER_STATUS = "status"
 ATTR_WORKER_WORKER = "worker_name"
 
-ATTR_REWARDS_PREV = "previous reward"
-ATTR_REWARDS_LAST = "last reward"
+ATTR_REWARDS_INCOME = "income"
+ATTR_REWARDS_TYPE = "reward type"
+ATTR_REWARDS_HASHRATE = "total hashrate"
 
-ATTR_PAYOUTS_PREV = "previous payout"
-ATTR_PAYOUTS_LAST = "last payout"
+ATTR_PAYOUTS_AMOUNT = "amount"
+ATTR_PAYOUTS_TXID = "transaction id"
 
 DATA_EMCD = "emcd_pool_cache"
 
@@ -90,24 +93,31 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             hass.data[DATA_EMCD], name, coin, account, worker, hashrate, hashrate1h, hashrate24h, active
         )
 
-    elif all(i in discovery_info for i in ['name', 'coin', 'account', 'rewards']):
+    elif all(i in discovery_info for i in ['name', 'coin', 'account', 'timestamp', 'gmt_time', 'income', 'type', 'hashrate' ]):
         name = discovery_info['name']
         coin = discovery_info['coin']
         account = discovery_info['account']
-        rewards = discovery_info['rewards']
+        timestamp = discovery_info['timestamp']
+        gmt_time = discovery_info['gmt_time']
+        income = discovery_info['income']
+        type = discovery_info['type']
+        hashrate = discovery_info['hashrate']
 
         sensor = EMCDRewardsSensor(
-            hass.data[DATA_EMCD], name, coin, account, rewards
+            hass.data[DATA_EMCD], name, coin, account, timestamp, gmt_time, income, type, hashrate
         )
         
-    elif all(i in discovery_info for i in ['name', 'coin', 'account', 'payouts']):
+    elif all(i in discovery_info for i in ['name', 'coin', 'account', 'timestamp', 'gmt_time', 'amount', 'txid' ]):
         name = discovery_info['name']
         coin = discovery_info['coin']
         account = discovery_info['account']
-        payouts = discovery_info['payouts']
+        timestamp = discovery_info['timestamp']
+        gmt_time = discovery_info['gmt_time']
+        amount = discovery_info['amount']
+        txid = discovery_info['txid']
 
         sensor = EMCDPayoutsSensor(
-            hass.data[DATA_EMCD], name, coin, account, payouts
+            hass.data[DATA_EMCD], name, coin, account, timestamp, gmt_time, amount, txid
         )        
 
     async_add_entities([sensor], True)
@@ -361,14 +371,17 @@ class EMCDWorkerSensor(SensorEntity):
 class EMCDRewardsSensor(SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, emcd_data, name, coin, account, rewards):
+    def __init__(self, emcd_data, name, coin, account, timestamp, gmt_time, income, type, hashrate):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
         self._name = f"{name} {account} ({coin}) rewards"
         self._coin = coin
         self._account = account
-        self._prev = rewards.get('previous', 0.00)
-        self._last = rewards.get('last', 0.00)
+        self._timestamp = timestamp
+        self._gmt_time = gmt_time
+        self._income = income
+        self._type = type
+        self._hashrate = hashrate
         self._unit_of_measurement = coin
         self._state = None
 
@@ -400,8 +413,11 @@ class EMCDRewardsSensor(SensorEntity):
 
         data = {
             ATTR_ATTRIBUTION: ATTRIBUTION,
-            ATTR_REWARDS_LAST: "{:.8f}".format(float(self._last)),
-            ATTR_REWARDS_PREV: "{:.8f}".format(float(self._prev)),
+            ATTR_REWARDS_INCOME: "{:.8f}".format(float(self._income)),
+            ATTR_REWARDS_HASHRATE: f"{self._hashrate}",
+            ATTR_REWARDS_TYPE: f"{self._type}",
+            ATTR_TIMESTAMP: f"{self._timestamp}",
+            ATTR_DATETIME: f"{self._gmt_time}",
             ATTR_COIN: f"{self._coin}",
             ATTR_ACCOUNT: f"{self._account}"             
         }
@@ -412,28 +428,33 @@ class EMCDRewardsSensor(SensorEntity):
         """Update current values."""
         await self._emcd_data.async_update()
         
-        self._prev = 0.00
-        self._last = 0.00
-        
+        self._income = 0.00
+        self._hashrate = 0
+
         if self._account in self._emcd_data.rewards:
             if self._coin in self._emcd_data.rewards[self._account]:
-                self._prev = self._emcd_data.rewards[self._account][self._coin].get('previous', 0.00)
-                self._last = self._emcd_data.rewards[self._account][self._coin].get('last', 0.00)                
+                self._timestamp = self._emcd_data.rewards[self._account][self._coin].get('timestamp', None)
+                self._gmt_time = self._emcd_data.rewards[self._account][self._coin].get('gmt_time', None)
+                self._income = self._emcd_data.rewards[self._account][self._coin].get('income', 0.00)
+                self._type = self._emcd_data.rewards[self._account][self._coin].get('type', None)
+                self._hashrate = self._emcd_data.rewards[self._account][self._coin].get('total_hashrate', 0)
          
-        self._state = float(self._last)             
+        self._state = float(self._income)             
         
         
 class EMCDPayoutsSensor(SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, emcd_data, name, coin, account, payouts):
+    def __init__(self, emcd_data, name, coin, account, timestamp, gmt_time, amount, txid):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
         self._name = f"{name} {account} ({coin}) payouts"
         self._coin = coin
         self._account = account
-        self._prev = payouts.get('previous', 0.00)
-        self._last = payouts.get('last', 0.00)
+        self._timestamp = timestamp
+        self._gmt_time = gmt_time
+        self._amount = amount
+        self._txid = txid
         self._unit_of_measurement = coin
         self._state = None
 
@@ -465,8 +486,10 @@ class EMCDPayoutsSensor(SensorEntity):
 
         data = {
             ATTR_ATTRIBUTION: ATTRIBUTION,
-            ATTR_PAYOUTS_LAST: "{:.8f}".format(float(self._last)),
-            ATTR_PAYOUTS_PREV: "{:.8f}".format(float(self._prev)),
+            ATTR_PAYOUTS_AMOUNT: "{:.8f}".format(float(self._amount)),
+            ATTR_PAYOUTS_TXID: f"{self._txid}",
+            ATTR_TIMESTAMP: f"{self._timestamp}",
+            ATTR_DATETIME: f"{self._gmt_time}",
             ATTR_COIN: f"{self._coin}",
             ATTR_ACCOUNT: f"{self._account}"             
         }
@@ -477,12 +500,13 @@ class EMCDPayoutsSensor(SensorEntity):
         """Update current values."""
         await self._emcd_data.async_update()
         
-        self._prev = 0.00
-        self._last = 0.00
+        self._amount = 0.00
         
         if self._account in self._emcd_data.payouts:
             if self._coin in self._emcd_data.payouts[self._account]:
-                self._prev = self._emcd_data.payouts[self._account][self._coin].get('previous', 0.00)
-                self._last = self._emcd_data.payouts[self._account][self._coin].get('last', 0.00)                
+                self._timestamp = self._emcd_data.payouts[self._account][self._coin].get('timestamp', None)
+                self._gmt_time = self._emcd_data.payouts[self._account][self._coin].get('gmt_time', None)
+                self._amount = self._emcd_data.payouts[self._account][self._coin].get('amount', 0.00)
+                self._txid = self._emcd_data.payouts[self._account][self._coin].get('txid', None)                
 
-        self._state = float(self._last)                
+        self._state = float(self._amount)                

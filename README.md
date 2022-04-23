@@ -50,8 +50,8 @@ This configuration will create the following entities in your Home Assistant ins
   coin
   account
   ```
-  - "My EMCD username (BTC) Info" (`sensor.my_emcd_username_btc_info`)
-  - "My EMCD username (LTC) Info" (`sensor.my_emcd_username_ltc_info`)
+  - "My EMCD username (BTC) info" (`sensor.my_emcd_username_btc_info`)
+  - "My EMCD username (LTC) info" (`sensor.my_emcd_username_ltc_info`)
 
 - Status sensors for each bundle (account + coin) with attributes...
   ```
@@ -65,8 +65,8 @@ This configuration will create the following entities in your Home Assistant ins
   coin
   account
   ```
-  - "My EMCD username (BTC) Info" (`sensor.my_emcd_username_btc_status`)
-  - "My EMCD username (LTC) Info" (`sensor.my_emcd_username_ltc_status`)  
+  - "My EMCD username (BTC) status" (`sensor.my_emcd_username_btc_status`)
+  - "My EMCD username (LTC) status" (`sensor.my_emcd_username_ltc_status`)  
 
 - Worker's sensors for each bundle (account + coin + worker) with attributes...
   ```
@@ -84,8 +84,11 @@ This configuration will create the following entities in your Home Assistant ins
 
 - Rewards sensors for each bundle (account + coin) with attributes...
   ```
-  last reward
-  previous reward
+  income
+  hashrate
+  reward type
+  unix timestamp
+  datetime
   coin
   account
   ```
@@ -94,8 +97,10 @@ This configuration will create the following entities in your Home Assistant ins
 
 - Payouts sensors for each bundle (account + coin) with attributes...
   ```
-  last payout
-  previous payout
+  amount
+  transaction id
+  unix timestamp
+  datetime  
   coin
   account
   ```
