@@ -84,8 +84,11 @@ This configuration will create the following entities in your Home Assistant ins
 
 - Rewards sensors for each bundle (account + coin) with attributes...
   ```
-  last reward
-  previous reward
+  income
+  hashrate
+  reward type
+  unix timestamp
+  datetime
   coin
   account
   ```
@@ -94,8 +97,10 @@ This configuration will create the following entities in your Home Assistant ins
 
 - Payouts sensors for each bundle (account + coin) with attributes...
   ```
-  last payout
-  previous payout
+  amount
+  transaction id
+  unix timestamp
+  datetime  
   coin
   account
   ```

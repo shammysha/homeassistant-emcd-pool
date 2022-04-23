@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.22"
+__version__ = "1.0.23"
 
 DOMAIN = "emcd_pool"
 
@@ -89,16 +89,25 @@ async def async_setup(hass, config):
                     'account': account,
                     'coin': coin,
                     'name': name,
-                    'rewards': emcd_data.rewards[account][coin]
+                    'timestamp': emcd_data.rewards[account][coin].get('timestamp', None),
+                    'gmt_time': emcd_data.rewards[account][coin].get('gmt_time', None),
+                    'income': emcd_data.rewards[account][coin].get('income', None),
+                    'type': emcd_data.rewards[account][coin].get('type', None),
+                    'hashrate': emcd_data.rewards[account][coin].get('total_hashrate', None)
                 }
+                                
                 await async_load_platform(hass, "sensor", DOMAIN, rewards, config)
 
+                
             if coin in emcd_data.payouts[account]:
                 payouts = {
                     'account': account,
                     'coin': coin,
                     'name': name,
-                    'payouts': emcd_data.payouts[account][coin]
+                    'timestamp': emcd_data.rewards[account][coin].get('timestamp', None),
+                    'gmt_time': emcd_data.rewards[account][coin].get('gmt_time', None),
+                    'amount': emcd_data.rewards[account][coin].get('amount', None),
+                    'txid': emcd_data.rewards[account][coin].get('txid', None)
                 }
                 await async_load_platform(hass, "sensor", DOMAIN, payouts, config)
 
@@ -162,25 +171,19 @@ class EMCDData:
 
                 _LOGGER.debug(f"Workers updated from emcd.io")
 
+            self.rewards[account][coin] = {}
             rewards = await self.client.async_get_rewards(coin.lower())
             if rewards and 'income' in rewards:
-                self.rewards[account][coin] = {}
-                
                 if len(rewards['income']) > 0:
-                    self.rewards[account][coin]['last'] = rewards['income'][0]
-                if len(rewards['income']) > 1:
-                    self.rewards[account][coin]['previous'] = rewards['income'][1]
+                    self.rewards[account][coin] = rewards['income'][0]
 
                 _LOGGER.debug(f"Rewards updated from emcd.io")
 
+            self.payouts[account][coin] = {}
             payouts = await self.client.async_get_payouts(coin.lower())
             if payouts and 'payouts' in payouts:
-                self.payouts[account][coin] = {}
-                                
                 if len(payouts['payouts']) > 0:
-                    self.payouts[account][coin]['last'] = payouts['payouts'][0]
-                if len(payouts['payouts']) > 1:
-                    self.payouts[account][coin]['previous'] = payouts['payouts'][1]
+                    self.payouts[account][coin] = payouts['payouts'][0]
 
                 _LOGGER.debug(f"Payouts updated from emcd.io")
 
