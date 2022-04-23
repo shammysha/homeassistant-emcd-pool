@@ -11,8 +11,8 @@ COIN_ICONS = {
     "LTC": "mdi:litecoin",
     "BCH": "mdi:bitcoin",
     "BSV": "mdi:bitcoin",
-    "ETH": "mdi:etherium",
-    "ETC": "mdi:etherium",
+    "ETH": "mdi:ethereum",
+    "ETC": "mdi:ethereum",
 }
 
 ATTRIBUTION = 'Data provided by EMCD'
@@ -119,7 +119,7 @@ class EMCDBalanceSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, balance, total_paid, min_payout, address):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) Info"
+        self._name = f"{name} {account} ({coin}) info"
         self._coin = coin
         self._account = account
         self._balance = balance
@@ -149,7 +149,7 @@ class EMCDBalanceSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
@@ -192,7 +192,7 @@ class EMCDStatusSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, status, hashrate):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) Status"
+        self._name = f"{name} {account} ({coin}) status"
         self._coin = coin
         self._account = account
         self._hrate = hashrate.get('hashrate', 0)
@@ -225,7 +225,7 @@ class EMCDStatusSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
@@ -274,13 +274,13 @@ class EMCDStatusSensor(SensorEntity):
         self._state = self._hrate 
  
  
- class EMCDWorkerSensor(SensorEntity):
+class EMCDWorkerSensor(SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, emcd_data, name, coin, account, worker, hashrate, hashrate1h, hashrate24h, active):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name}.{worker} ({coin}) worker"
+        self._name = f"{name} {account}.{worker} ({coin}) worker"
         self._coin = coin
         self._account = account
         self._worker = worker
@@ -328,8 +328,8 @@ class EMCDStatusSensor(SensorEntity):
             ATTR_STATUS_HRATE: f"{self._hrate}",
             ATTR_STATUS_HRATE1H: f"{self._hrate1h}",
             ATTR_STATUS_HRATE24H: f"{self._hrate24h}",
-            ATTR_WORKER_STATUS = "{}".format(self._status_vars[self._active] or self._status_vars[0])
-            ATTR_WORKER_WORKER = f"{self._worker}"            
+            ATTR_WORKER_STATUS: "{}".format(self._status_vars[self._active] or self._status_vars[0]),
+            ATTR_WORKER_WORKER: f"{self._worker}",
             ATTR_COIN: f"{self._coin}",
             ATTR_ACCOUNT: f"{self._account}" 
         }
@@ -364,7 +364,7 @@ class EMCDRewardsSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, rewards):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) rewards"
+        self._name = f"{name} {account} ({coin}) rewards"
         self._coin = coin
         self._account = account
         self._prev = rewards.get('previous', 0.00)
@@ -392,7 +392,7 @@ class EMCDRewardsSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):
@@ -429,7 +429,7 @@ class EMCDPayoutsSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, payouts):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} ({coin}) rewards"
+        self._name = f"{name} {account} ({coin}) payouts"
         self._coin = coin
         self._account = account
         self._prev = payouts.get('previous', 0.00)
@@ -457,7 +457,7 @@ class EMCDPayoutsSensor(SensorEntity):
     def icon(self):
         """Icon to use in the frontend, if any."""
 
-        return CURRENCY_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
+        return COIN_ICONS.get(self._coin, "mdi:currency-" + self._coin.lower())
 
     @property
     def extra_state_attributes(self):

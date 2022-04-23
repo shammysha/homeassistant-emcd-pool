@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.7"
+__version__ = "1.0.18"
 
 DOMAIN = "emcd_pool"
 
@@ -61,7 +61,7 @@ async def async_setup(hass, config):
                 continue
 
             balance['account'] = account
-            balance['coin'] = coin.upper()
+            balance['coin'] = coin
             balance['name'] = name
 
             await async_load_platform(hass, "sensor", DOMAIN, balance, config)
@@ -70,7 +70,7 @@ async def async_setup(hass, config):
                 status = {
                     'name': name,
                     'account': account,
-                    'coin': coin.upper(),
+                    'coin': coin,
                     'status': emcd_data.mining[account][coin]['status'],
                     'hashrate': emcd_data.mining[account][coin]['hashrate']
                 }
@@ -80,13 +80,13 @@ async def async_setup(hass, config):
                 for worker in emcd_data.mining[account][coin]['workers']:
                     worker['name'] = name
                     worker['account'] = account
-                    worker['coin'] = coin.upper()
+                    worker['coin'] = coin
 
                     await async_load_platform(hass, "sensor", DOMAIN, worker, config)
 
             if coin in emcd_data.rewards:
                 rewards['account'] = account
-                rewards['coin'] = coin.upper()
+                rewards['coin'] = coin
                 rewards['name'] = name
                 rewards['rewards'] = emcd_data.rewards[account][coin]
 
@@ -94,7 +94,7 @@ async def async_setup(hass, config):
 
             if coin in emcd_data.rewards:
                 payouts['account'] = account
-                payouts['coin'] = coin.upper()
+                payouts['coin'] = coin
                 payouts['name'] = name
                 payouts['payouts'] = emcd_data.payouts[account][coin]
 
@@ -124,6 +124,7 @@ class EMCDData:
         _LOGGER.debug(f"Fetching data from api.emcd.io")
 
         balances = await self.client.async_get_info()
+        _LOGGER.debug(f"EMCD Balances: {balances}")
         if not balances:
             return False
 
@@ -139,17 +140,17 @@ class EMCDData:
             if coin in ['notifications', 'username']:
                 continue
 
-            for short_def, long_def in self.coins:
+            for short_def, long_def in self.coins.items():
                 if coin == long_def:
                     coin = short_def
 
-            self.balances[account][coin] = data
+            self.balances[account][coin.upper()] = data
 
             _LOGGER.debug(f"Balances updated from emcd.io")
 
-        for coin in self.balances['accounts'][account]:
+        for coin in self.balances[account]:
 
-            workers = await self.client.async_get_workers(coin)
+            workers = await self.client.async_get_workers(coin.lower())
             if workers:
                 self.mining[account][coin] = {
                     'status': workers['total_count'],
@@ -159,7 +160,7 @@ class EMCDData:
 
                 _LOGGER.debug(f"Workers updated from emcd.io")
 
-            rewards = await self.client.async_get_rewards(coin)
+            rewards = await self.client.async_get_rewards(coin.lower())
             if rewards and 'income' in rewards:
                 if len(rewards['income']) > 0:
                     self.rewards[account][coin]['last'] = (rewards['income'][0] or 0)
@@ -168,7 +169,7 @@ class EMCDData:
 
                 _LOGGER.debug(f"Rewards updated from emcd.io")
 
-            payouts = await self.client.async_get_payouts(coin)
+            payouts = await self.client.async_get_payouts(coin.lower())
             if payouts and 'payouts' in payouts:
                 if len(payouts['payouts']) > 0:
                     self.payouts[account][coin]['last'] = payouts['payouts'][0]
@@ -183,10 +184,23 @@ class EMCDPoolClient:
     REQUEST_TIMEOUT = 10
 
     def __init__(self, api_key: str, loop = None):
+        self.loop = loop or asyncio.get_event_loop()
         self.API_KEY = api_key
         self.session = self._init_session()
         self.response = None
-        self.loop = loop or asyncio.get_event_loop()
+
+    @classmethod
+    async def create(cls, api_key: str, loop=None):
+
+        self = cls(api_key, loop)
+
+        try:
+            return self
+        except Exception:
+            # If ping throw an exception, the current self must be cleaned
+            # else, we can receive a "asyncio:Unclosed client session"
+            await self.close_connection()
+            raise
 
     def _get_headers(self):
         return {
@@ -223,7 +237,7 @@ class EMCDPoolClient:
 
     def _create_api_url(self, path: str, coin: str = None ) -> str:
         url = self.API_URL + '/' + self.API_VERSION
-        if not coin is None:
+        if coin:
             url += '/' + coin
         return url + '/' + path + '/' + self.API_KEY
 
@@ -240,25 +254,16 @@ class EMCDPoolClient:
         return answer
 
     async def async_get_info(self, path: str = 'info'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
+        return await self.async_request_api(path)
 
     async def async_get_workers(self, coin, path: str = 'workers'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
+        return await self.async_request_api(path, coin)
 
     async def async_get_rewards(self, coin, path: str = 'income'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
-
+        return await self.async_request_api(path, coin)
 
     async def async_get_payouts(self, coin, path: str = 'payouts'):
-        uri = self._create_api_url(path)
-
-        return await self._request(uri)
+        return await self.async_request_api(path, coin)
 
 
 
