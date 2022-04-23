@@ -437,7 +437,7 @@ class EMCDRewardsSensor(SensorEntity):
                 self._gmt_time = self._emcd_data.rewards[self._account][self._coin].get('gmt_time', None)
                 self._income = self._emcd_data.rewards[self._account][self._coin].get('income', 0.00)
                 self._type = self._emcd_data.rewards[self._account][self._coin].get('type', None)
-                self._hashrate = self._emcd_data.rewards[self._account][self._coin].get('hashrate', 0)
+                self._hashrate = self._emcd_data.rewards[self._account][self._coin].get('total_hashrate', 0)
          
         self._state = float(self._income)             
         

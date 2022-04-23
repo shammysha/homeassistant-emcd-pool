@@ -4,7 +4,7 @@
   "documentation": "https://github.com/shammysha/homeassistant-emcd-pool",
   "issue_tracker": "https://github.com/shammysha/homeassistant-emcd-pool/issues",
   "dependencies": [],
-  "version": "1.0.23",
+  "version": "1.0.24",
   "codeowners": [
     "@shammysha"
   ]
