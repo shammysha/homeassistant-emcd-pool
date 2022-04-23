@@ -119,7 +119,7 @@ class EMCDBalanceSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, balance, total_paid, min_payout, address):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} {account} ({coin}) Info"
+        self._name = f"{name} {account} ({coin}) info"
         self._coin = coin
         self._account = account
         self._balance = balance
@@ -192,7 +192,7 @@ class EMCDStatusSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, status, hashrate):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} {account} ({coin}) Status"
+        self._name = f"{name} {account} ({coin}) status"
         self._coin = coin
         self._account = account
         self._hrate = hashrate.get('hashrate', 0)
@@ -429,7 +429,7 @@ class EMCDPayoutsSensor(SensorEntity):
     def __init__(self, emcd_data, name, coin, account, payouts):
         """Initialize the sensor."""
         self._emcd_data = emcd_data
-        self._name = f"{name} {account} ({coin}) rewards"
+        self._name = f"{name} {account} ({coin}) payouts"
         self._coin = coin
         self._account = account
         self._prev = payouts.get('previous', 0.00)
