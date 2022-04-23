@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.21"
+__version__ = "1.0.22"
 
 DOMAIN = "emcd_pool"
 
@@ -85,19 +85,21 @@ async def async_setup(hass, config):
                     await async_load_platform(hass, "sensor", DOMAIN, worker, config)
 
             if coin in emcd_data.rewards[account]:
-                rewards['account'] = account
-                rewards['coin'] = coin
-                rewards['name'] = name
-                rewards['rewards'] = emcd_data.rewards[account][coin]
-
+                rewards = {
+                    'account': account,
+                    'coin': coin,
+                    'name': name,
+                    'rewards': emcd_data.rewards[account][coin]
+                }
                 await async_load_platform(hass, "sensor", DOMAIN, rewards, config)
 
             if coin in emcd_data.payouts[account]:
-                payouts['account'] = account
-                payouts['coin'] = coin
-                payouts['name'] = name
-                payouts['payouts'] = emcd_data.payouts[account][coin]
-
+                payouts = {
+                    'account': account,
+                    'coin': coin,
+                    'name': name,
+                    'payouts': emcd_data.payouts[account][coin]
+                }
                 await async_load_platform(hass, "sensor", DOMAIN, payouts, config)
 
     return True
