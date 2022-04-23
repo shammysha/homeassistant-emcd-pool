@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 
-__version__ = "1.0.18"
+__version__ = "1.0.19"
 
 DOMAIN = "emcd_pool"
 
@@ -257,12 +257,170 @@ class EMCDPoolClient:
         return await self.async_request_api(path)
 
     async def async_get_workers(self, coin, path: str = 'workers'):
+        if coin == 'btc':
+            return {
+                "total_count": {
+                    "all": 3,
+                    "active": 2,
+                    "inactive": 1
+                },
+                "total_hashrate": {
+                    "hashrate": 295548725546189,
+                    "hashrate1h": 301647350041587,
+                    "hashrate24h": 302284252332638
+                },
+                "details": [
+                    {
+                        "worker": "s9_1",
+                        "hashrate": 11258999068426,
+                        "hashrate1h": 14073748835533,
+                        "hashrate24h": 13653491057805,
+                        "active": 1
+                    },
+                    {
+                        "worker": "s9_2",
+                        "hashrate": 14073748835533,
+                        "hashrate1h": 12353623977857,
+                        "hashrate24h": 14011850403154,
+                        "active": 1
+                    },
+                    {
+                        "worker": "s9_3",
+                        "hashrate": 14073748835533,
+                        "hashrate1h": 12353623977857,
+                        "hashrate24h": 14011850403154,
+                        "active": 0
+                    }                
+                ]
+            }
+        if coin == 'ltc':
+            return {
+              "total_count": {
+                "all": 3,
+                "active": 3,
+                "inactive": 0
+              },
+              "total_hashrate": {
+                "hashrate": 295548725546189,
+                "hashrate1h": 301647350041587,
+                "hashrate24h": 302284252332638
+              },
+              "details": [
+                {
+                  "worker": "s9_4",
+                  "hashrate": 11258999068426,
+                  "hashrate1h": 14073748835533,
+                  "hashrate24h": 13653491057805,
+                  "active": 1
+                },
+                {
+                  "worker": "s9_5",
+                  "hashrate": 14073748835533,
+                  "hashrate1h": 12353623977857,
+                  "hashrate24h": 14011850403154,
+                  "active": 1
+                },
+                {
+                  "worker": "s9_6",
+                  "hashrate": 14073748835533,
+                  "hashrate1h": 12353623977857,
+                  "hashrate24h": 14011850403154,
+                  "active": 1
+                }                
+              ]
+            }            
+        
         return await self.async_request_api(path, coin)
 
     async def async_get_rewards(self, coin, path: str = 'income'):
+        if coin == 'btc':
+            return {
+                "income": [
+                    {
+                        "timestamp": 1569456000,
+                        "gmt_time": "26-09-2019 00:00:00",
+                        "income": 0.00830608,
+                        "type": "fpps",
+                        "total_hashrate": 390089214794186
+                    },
+                    {
+                        "timestamp": 1569369600,
+                        "gmt_time": "25-09-2019 00:00:00",
+                        "income": 0.0085248,
+                        "type": "fpps",
+                        "total_hashrate": 401954186026219
+                    }
+                ]
+            }
+        if coin == 'ltc':
+            return {
+                "income": [
+                    {
+                        "timestamp": 1569456000,
+                        "gmt_time": "26-09-2019 00:00:00",
+                        "income": 0.00610602,
+                        "type": "fpps",
+                        "total_hashrate": 390089214794186
+                    },
+                    {
+                        "timestamp": 1569369600,
+                        "gmt_time": "25-09-2019 00:00:00",
+                        "income": 0.0061211,
+                        "type": "fpps",
+                        "total_hashrate": 401954186026219
+                    }
+                ]
+            }            
+        
         return await self.async_request_api(path, coin)
 
     async def async_get_payouts(self, coin, path: str = 'payouts'):
+        if coin == 'btc':
+            return {
+                "payouts": [
+                    {
+                        "timestamp": 1569389401,
+                        "gmt_time": "25-09-2019 05:30:01",
+                        "amount": 0.0166448,
+                        "txid": "13849427081db06138a9b692d91e2fe167b7848a395713f60164970cb436fa65"
+                    },
+                    {
+                        "timestamp": 1569216601,
+                        "gmt_time": "23-09-2019 05:30:01",
+                        "amount": 0.01659731,
+                        "txid": "751b51187611e695c535400b7efef8aa39931cd1c50bbcdeb794547b37aae0d0"
+                    },
+                    {
+                        "timestamp": 1569043801,
+                        "gmt_time": "21-09-2019 05:30:01",
+                        "amount": 0.01600989,
+                        "txid": "f7ff8ff5326b869efafceb89d665acf7d995a75b73f9f4136340dbec1c5cc8ce"
+                    }
+                ]
+            }
+        if coin == 'ltc':
+            return {
+                "payouts": [
+                    {
+                        "timestamp": 1569389401,
+                        "gmt_time": "25-09-2019 05:30:01",
+                        "amount": 0.0166448,
+                        "txid": "13849427081db06138a9b692d91e2fe167b7848a395713f60164970cb436fa65"
+                    },
+                    {
+                        "timestamp": 1569216601,
+                        "gmt_time": "23-09-2019 05:30:01",
+                        "amount": 0.01659731,
+                        "txid": "751b51187611e695c535400b7efef8aa39931cd1c50bbcdeb794547b37aae0d0"
+                    },
+                    {
+                        "timestamp": 1569043801,
+                        "gmt_time": "21-09-2019 05:30:01",
+                        "amount": 0.01600989,
+                        "txid": "f7ff8ff5326b869efafceb89d665acf7d995a75b73f9f4136340dbec1c5cc8ce"
+                    }
+                ]
+            }            
         return await self.async_request_api(path, coin)
 
 
