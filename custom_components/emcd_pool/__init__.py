@@ -14,7 +14,7 @@ from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 from cgitb import reset
 
-__version__ = "1.0.25"
+__version__ = "1.0.26"
 
 DOMAIN = "emcd_pool"
 
@@ -176,7 +176,7 @@ class EMCDData:
 
             res = await asyncio.gather(*tasks, return_exceptions=True)
             
-            workers, rewards, payouts = reset
+            workers, rewards, payouts = res
             
             if workers:
                 self.mining[account][coin] = {
