@@ -14,7 +14,7 @@ from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.util import Throttle
 from cgitb import reset
 
-__version__ = "1.0.26"
+__version__ = "1.0.27"
 
 DOMAIN = "emcd_pool"
 
@@ -52,9 +52,15 @@ async def async_setup(hass, config):
 
     emcd_data = EMCDData(api_key)
 
-    await emcd_data.async_update();
+    try:
+        await emcd_data.async_update();
+    
+    except Exception as e:
+        _LOGGER.error(f"Error fetching data from emcd.io: {repr(e)}")
 
-    hass.data[DATA_EMCD] = emcd_data
+        return False
+
+    hass.data[DATA_EMCD] = emcd_data     
 
     for account, data in emcd_data.balances.items():
         for coin, balance in data.items():
