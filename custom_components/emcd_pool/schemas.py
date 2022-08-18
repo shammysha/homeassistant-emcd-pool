@@ -14,8 +14,7 @@ from .const import (
 
 CONFIG_ENTRY_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_API_KEY): cv.string,
-        vol.Required(CONF_USERNAME): cv.string
+        vol.Required(CONF_API_KEY): cv.string
     },
     extra=vol.PREVENT_EXTRA
 ) 
