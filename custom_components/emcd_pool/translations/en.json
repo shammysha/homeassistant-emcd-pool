@@ -1,0 +1,19 @@
+{
+    "config": {
+        "abort": {
+            "already_exists": "Record with same name already exists.",
+            "empty_config": "Config looks like empty.",
+            "invalid_credentials": "Can not authorize on EMCD API (empty or wrong api_key)"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "api_key": "EMCD API key"
+                },
+                "description": "Please enter API Key, obtained from \"Settings\" page on EMCD site",
+                "title": "Settings"
+            }           
+        }
+    },
+    "title": "EMCD Pool"
+}
