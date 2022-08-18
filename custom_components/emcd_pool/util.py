@@ -25,7 +25,7 @@ async def find_existing_entry(hass: HomeAssistantType, api_key: str, username: s
         if config_entry.data[CONF_USERNAME] == username:
             return config_entry
         
-async def async_fetch_username(self, api_key: str):
+async def async_fetch_username(api_key: str):
     username = None
     
     from .client import EMCDPoolClient
