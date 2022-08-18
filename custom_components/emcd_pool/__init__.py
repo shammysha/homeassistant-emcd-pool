@@ -209,7 +209,7 @@ class EMCDData(DataUpdateCoordinator):
         
         super().__init__(hass, _LOGGER, name="EMCDData", update_interval=timedelta(minutes=SCAN_INTERVAL))
         
-        self.client = self.EMCDPoolClient(api_key)
+        self.client = EMCDPoolClient(api_key)
         self.username = None
         self.balances = {}
         self.mining = {}
@@ -227,8 +227,6 @@ class EMCDData(DataUpdateCoordinator):
 
         _LOGGER.debug(f"EMCD Balances: {balances}")
             
-        self.balances = {}
-        
         if not balances:
             raise ConfigEntryAuthFailed(f'No data found for current API key')
 
