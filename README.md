@@ -15,32 +15,21 @@ EMCD pool statistics and monitoring
 ---
 In order to use this integration, you need to first [Register an account with EMCD](https://emcd.io/pool/dashboard/registration), and then [get API-key](https://emcd.io/pool/dashboard/settings)  from bottom of "Settings" page.
 
-To use this component in your installation, add the following to your `configuration.yaml` file:
+To use this component, add new integration via HomeAssistant GUI or add the following to your `configuration.yaml` file:
 
 ```yaml
 emcd_pool:
-  api_key: !secret emcd_api_key
+  - api_key: !secret emcd_api_key
   
 ```
 
 #### Configuration variables:
 | Key               | Type   | Required | Description                               | Default |
 | :---------------- | :----: | :------: |:--------------------------------------    | :-----: |
-| `name`            | string | No       | Name for the created sensors              | EMCD    |
 | `api_key`         | string | Yes      | Your's EMCD API key                       | -       |
-| `coins`           | list   | No       | List of monitored coins                   | All     |
 
-#### Full example configuration
-```yaml
-emcd_pool:
-  name: my_emcd
-  api_key: !secret emcd_api
-  coins:
-    - BTC
-    - LTC
-```
+This configuration will create the following entities in your Home Assistant instance (assume, that api_key's owner's account is "username" for example) :
 
-This configuration will create the following entities in your Home Assistant instance:
 - Info sensors for each bundle (account + coin) with attributes...
   ```
   balance
@@ -50,8 +39,8 @@ This configuration will create the following entities in your Home Assistant ins
   coin
   account
   ```
-  - "My EMCD username (BTC) info" (`sensor.my_emcd_username_btc_info`)
-  - "My EMCD username (LTC) info" (`sensor.my_emcd_username_ltc_info`)
+  - "EMCD username (BTC) info" (`sensor.emcd_username_btc_info`)
+  - "EMCD username (LTC) info" (`sensor.emcd_username_ltc_info`)
 
 - Status sensors for each bundle (account + coin) with attributes...
   ```
@@ -65,8 +54,8 @@ This configuration will create the following entities in your Home Assistant ins
   coin
   account
   ```
-  - "My EMCD username (BTC) status" (`sensor.my_emcd_username_btc_status`)
-  - "My EMCD username (LTC) status" (`sensor.my_emcd_username_ltc_status`)  
+  - "EMCD username (BTC) status" (`sensor.emcd_username_btc_status`)
+  - "EMCD username (LTC) status" (`sensor.emcd_username_ltc_status`)  
 
 - Worker's sensors for each bundle (account + coin + worker) with attributes...
   ```
@@ -79,8 +68,8 @@ This configuration will create the following entities in your Home Assistant ins
   account
   ```
   ... for example:
-  - "My EMCD username.1023 (BTC) worker" (`sensor.my_emcd_username.1023_btc_worker`)
-  - "My EMCD username.1024 (LTC) worker" (`sensor.my_emcd_username.1024_ltc_worker`)
+  - "EMCD username.1023 (BTC) worker" (`sensor.emcd_username.1023_btc_worker`)
+  - "EMCD username.1024 (LTC) worker" (`sensor.emcd_username.1024_ltc_worker`)
 
 - Rewards sensors for each bundle (account + coin) with attributes...
   ```
@@ -92,8 +81,8 @@ This configuration will create the following entities in your Home Assistant ins
   coin
   account
   ```
-  - "My EMCD username (BTC) rewards" (`sensor.my_emcd_username_btc_rewards`)
-  - "My EMCD username (LTC) rewards" (`sensor.my_emcd_username_ltc_rewards`)
+  - "EMCD username (BTC) rewards" (`sensor.emcd_username_btc_rewards`)
+  - "EMCD username (LTC) rewards" (`sensor.emcd_username_ltc_rewards`)
 
 - Payouts sensors for each bundle (account + coin) with attributes...
   ```
@@ -104,20 +93,14 @@ This configuration will create the following entities in your Home Assistant ins
   coin
   account
   ```
-  - "My EMCD username (BTC) payouts" (`sensor.my_emcd_username_btc_payouts`)
-  - "My EMCD username (LTC) payouts" (`sensor.my_emcd_username_ltc_payouts`)
+  - "EMCD username (BTC) payouts" (`sensor.emcd_username_btc_payouts`)
+  - "EMCD username (LTC) payouts" (`sensor.emcd_username_ltc_payouts`)
 
 ### Configuration details
 ---
 
-#### `name`
-The `name` you specify will be used as a prefix for all the sensors this integration creates. By default, the prefix is simply "EMCD".
-
 #### `api_key`
 An API key from EMCD are **required** for this integration to function.  It is *highly recommended* to store your API key in Home Assistant's `secrets.yaml` file.
-
-#### `coins`
-A list of coins, You want to add for monitoring in HomeAssistant. By default? sensors for all coins will be created
 
 ## Donate
 
