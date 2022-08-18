@@ -278,6 +278,6 @@ class EMCDData(DataUpdateCoordinator):
     
                     _LOGGER.debug(f"Payouts updated from emcd.io")
 
-        except EMCDAPIException) as e:  
+        except EMCDAPIException as e:  
             await self.client.close_connection()  
-            raise UpdateFailed(f'Error fetching data from pool API: {err}')
+            raise UpdateFailed from e
