@@ -1,0 +1,19 @@
+{
+    "config": {
+        "abort": {
+            "already_exists": "Запись с таким аккаунтом уже существует.",
+            "empty_config": "Конфиг выглядит пустым.",
+            "invalid_credentials": "Ошибка авторизации EMCD API (пустой или некорректный API key)"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "api_key": "EMCD API key"
+                },
+                "description": "Введите ключ API, полученный <a href=\"https://emcd.io/pool/dashboard/settings\">отсюда</a>",
+                "title": "Настройки"
+            }           
+        }
+    },
+    "title": "EMCD Pool"
+}

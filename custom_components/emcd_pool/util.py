@@ -10,7 +10,6 @@ from homeassistant.core import callback
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.const import CONF_USERNAME
 from .const import DOMAIN
-from emcd_pool.exceptions import EMCDAPIException
 
 @callback
 async def find_existing_entry(hass: HomeAssistantType, api_key: str, username: str = None) -> Optional[ConfigEntry]:
@@ -18,6 +17,7 @@ async def find_existing_entry(hass: HomeAssistantType, api_key: str, username: s
         username = await async_fetch_username(api_key)
 
     if not username:
+        from .exceptions import EMCDAPIException
         raise EMCDAPIException('Invalid credentials')
 
     existing_entries = hass.config_entries.async_entries(DOMAIN)

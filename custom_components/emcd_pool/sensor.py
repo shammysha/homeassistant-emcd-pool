@@ -1,11 +1,6 @@
 """
 EMCD sensor
 """
-from datetime import (
-    datetime, 
-    timezone
-)
-
 from homeassistant.const import (
     ATTR_ATTRIBUTION
 )
@@ -130,10 +125,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if sensor:
             async_add_entities([sensor], True)
 
-class EMCDBalanceSensor(SensorEntity):
+class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, balance, total_paid, min_payout, address):
+        super().__init__(coordinator)        
+        
         """Initialize the sensor."""
         self._coordinator = coordinator
         self._name = f"{name} {username} ({coin}) info"
@@ -205,10 +202,12 @@ class EMCDBalanceSensor(SensorEntity):
  
         self.async_write_ha_state()
  
-class EMCDStatusSensor(SensorEntity):
+class EMCDStatusSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, status, hashrate):
+        super().__init__(coordinator)        
+        
         """Initialize the sensor."""
         self._coordinator = coordinator
         self._name = f"{name} {username} ({coin}) status"
@@ -295,10 +294,12 @@ class EMCDStatusSensor(SensorEntity):
  
         self.async_write_ha_state()
  
-class EMCDWorkerSensor(SensorEntity):
+class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, worker, hashrate, hashrate1h, hashrate24h, active):
+        super().__init__(coordinator)
+        
         """Initialize the sensor."""
         self._coordinator = coordinator
         self._name = f"{name} {username}.{worker} ({coin}) worker"
@@ -342,7 +343,7 @@ class EMCDWorkerSensor(SensorEntity):
 
         try:
             return self._status_icons[self._active]
-        except KeyError as e:
+        except KeyError:
             return self._status_icons[0]
 
     @property
@@ -383,10 +384,12 @@ class EMCDWorkerSensor(SensorEntity):
         
         self.async_write_ha_state()
         
-class EMCDRewardsSensor(SensorEntity):
+class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, income, rew_type, hashrate):
+        super().__init__(coordinator)
+        
         """Initialize the sensor."""
         self._coordinator = coordinator
         self._name = f"{name} {username} ({coin}) rewards"
@@ -460,10 +463,12 @@ class EMCDRewardsSensor(SensorEntity):
         
         self.async_write_ha_state()
         
-class EMCDPayoutsSensor(SensorEntity):
+class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, amount, txid):
+        super().__init__(coordinator)
+        
         """Initialize the sensor."""
         self._coordinator = coordinator
         self._name = f"{name} {username} ({coin}) payouts"

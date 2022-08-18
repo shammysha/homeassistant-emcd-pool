@@ -95,7 +95,7 @@ class EMCDPoolConfigFlow(ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="empty_config")
         
         if not user_input[CONF_API_KEY]:
-            return self.async_abort(reason="empty api_key")            
+            return self.async_abort(reason="invalid_credentials")            
             
         user_input[CONF_USERNAME] = await self.async_fetch_username(user_input[CONF_API_KEY])
         
