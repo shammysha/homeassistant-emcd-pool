@@ -217,67 +217,67 @@ class EMCDData(DataUpdateCoordinator):
         self.payouts = {}
         self.rewards = {}
 
-    async def async_update_data(self):
+
+    async def _async_update_data(self):
         _LOGGER.debug(f"Fetching data from api.emcd.io")
         
         try:
             balances = await self.client.async_get_info()
         
-        except EMCDAPIException as err:    
+            _LOGGER.debug(f"EMCD Balances: {balances}")
+                
+            if not balances:
+                raise ConfigEntryAuthFailed(f'No data found for current API key')
+    
+            self.username = balances.pop('username', None);
+            balances.pop('notifications', None);
+            
+            self.balances = {}
+            self.mining = {}
+            self.payouts = {}
+            self.rewards = {}
+    
+            for coin, data in balances.items():
+                coin = COIN_EMCD.get(coin, coin)
+    
+                self.balances[coin.upper()] = data
+    
+                _LOGGER.debug(f"Balances updated from emcd.io")
+    
+            for coin in self.balances:
+                tasks = [
+                    self.client.async_get_workers(coin.lower()),
+                    self.client.async_get_rewards(coin.lower()),
+                    self.client.async_get_payouts(coin.lower())
+                ]
+    
+                res = await gather(*tasks, return_exceptions=True)
+                
+                workers, rewards, payouts = res
+                
+                if workers:
+                    self.mining[coin] = {
+                        'status': workers['total_count'],
+                        'hashrate': workers['total_hashrate'],
+                        'workers': workers['details']
+                    }
+    
+                    _LOGGER.debug(f"Workers updated from emcd.io")
+    
+                self.rewards[coin] = {}
+                if rewards and 'income' in rewards:
+                    if len(rewards['income']) > 0:
+                        self.rewards[coin] = rewards['income'][0]
+    
+                    _LOGGER.debug(f"Rewards updated from emcd.io")
+    
+                self.payouts[coin] = {}
+                if payouts and 'payouts' in payouts:
+                    if len(payouts['payouts']) > 0:
+                        self.payouts[coin] = payouts['payouts'][0]
+    
+                    _LOGGER.debug(f"Payouts updated from emcd.io")
+
+        except EMCDAPIException) as e:  
+            await self.client.close_connection()  
             raise UpdateFailed(f'Error fetching data from pool API: {err}')
-
-        _LOGGER.debug(f"EMCD Balances: {balances}")
-            
-        if not balances:
-            raise ConfigEntryAuthFailed(f'No data found for current API key')
-
-        self.username = balances.pop('username', None);
-        balances.pop('notifications', None);
-        
-        self.balances = {}
-        self.mining = {}
-        self.payouts = {}
-        self.rewards = {}
-
-        for coin, data in balances.items():
-            coin = COIN_EMCD.get(coin, coin)
-
-            self.balances[coin.upper()] = data
-
-            _LOGGER.debug(f"Balances updated from emcd.io")
-
-        for coin in self.balances:
-            tasks = [
-                self.client.async_get_workers(coin.lower()),
-                self.client.async_get_rewards(coin.lower()),
-                self.client.async_get_payouts(coin.lower())
-            ]
-
-            res = await gather(*tasks, return_exceptions=True)
-            
-            workers, rewards, payouts = res
-            
-            if workers:
-                self.mining[coin] = {
-                    'status': workers['total_count'],
-                    'hashrate': workers['total_hashrate'],
-                    'workers': workers['details']
-                }
-
-                _LOGGER.debug(f"Workers updated from emcd.io")
-
-            self.rewards[coin] = {}
-            if rewards and 'income' in rewards:
-                if len(rewards['income']) > 0:
-                    self.rewards[coin] = rewards['income'][0]
-
-                _LOGGER.debug(f"Rewards updated from emcd.io")
-
-            self.payouts[coin] = {}
-            if payouts and 'payouts' in payouts:
-                if len(payouts['payouts']) > 0:
-                    self.payouts[coin] = payouts['payouts'][0]
-
-                _LOGGER.debug(f"Payouts updated from emcd.io")
-
-
