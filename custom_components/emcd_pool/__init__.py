@@ -66,8 +66,6 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
     domain_config = config.get(DOMAIN)
     
-    _LOGGER.debug(f'domain_config: {domain_config}')
-
     if not domain_config:
         return True
     
@@ -75,8 +73,6 @@ async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
     hass.data[DOMAIN] = { 'yaml': yaml_config }
     
     for item in domain_config:
-        _LOGGER.debug(f'item: {item}')
-        
         existing_entry = await find_existing_entry(hass, item[CONF_API_KEY])
         if existing_entry:
             if existing_entry.source == SOURCE_IMPORT:
@@ -95,8 +91,6 @@ async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
 async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) -> bool:   
     entry_id = config_entry.entry_id
     api_key = config_entry.data[CONF_API_KEY]
-    
-    _LOGGER.debug(f'config_entry.data: {config_entry.data}')
     
     try:
         username = config_entry.data[CONF_USERNAME]

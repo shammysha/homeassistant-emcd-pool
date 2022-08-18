@@ -193,10 +193,10 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
         self._address = ''        
         
         if self._coin in self._coordinator.balances:
-            self._balance = float(self._coordinator.balances[self._coin].get('balance', 0.00))
-            self._total_paid = float(self._coordinator.balances[self._coin].get('total_paid', 0.00))
-            self._min_payout = float(self._coordinator.balances[self._coin].get('min_payout', 0.00))
-            self._address = self._coordinator.balances[self._coin].get('address', '')                
+            self._balance = float(self._coordinator.balances[self._coin].get('balance') or 0.00)
+            self._total_paid = float(self._coordinator.balances[self._coin].get('total_paid') or 0.00)
+            self._min_payout = float(self._coordinator.balances[self._coin].get('min_payout') or 0.00)
+            self._address = (self._coordinator.balances[self._coin].get('address') or '')                
          
         self._state = float(self._balance)     
  
@@ -309,7 +309,7 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
         self._hrate = hashrate
         self._hrate1h = hashrate1h
         self._hrate24h = hashrate24h
-        self._active = active
+        self._active = (active or 0)
         self._unit_of_measurement = "H/s"
         self._state = None
 
@@ -377,7 +377,7 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
                         self._hrate = worker.get('hashrate', 0)
                         self._hrate1h = worker.get('hashrate1h', 0)
                         self._hrate24h = worker.get('hashrate24h', 0)
-                        self._active = worker.get('active', 0)
+                        self._active = (worker.get('active') or 0)
                             
          
         self._state = self._hrate 
@@ -531,7 +531,7 @@ class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
         if self._coin in self._coordinator.payouts:
             self._timestamp = self._coordinator.payouts[self._coin].get('timestamp', None)
             self._gmt_time = self._coordinator.payouts[self._coin].get('gmt_time', None)
-            self._amount = float(self._coordinator.payouts[self._coin].get('amount', 0.00))
+            self._amount = float(self._coordinator.payouts[self._coin].get('amount') or 0.00)
             self._txid = self._coordinator.payouts[self._coin].get('txid', None)                
 
         self._state = self._amount      
