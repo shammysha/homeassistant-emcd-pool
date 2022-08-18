@@ -10,7 +10,7 @@
                 "data": {
                     "api_key": "EMCD API key"
                 },
-                "description": "Please enter API Key, obtained from <a href=\"https://emcd.io/pool/dashboard/settings\">here</a>",
+                "description": "Please enter API Key, obtained from \"Settings\" page on EMCD site",
                 "title": "Settings"
             }           
         }
