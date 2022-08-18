@@ -123,7 +123,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
     
     emcd_data = EMCDData(hass, config[CONF_API_KEY])
 
-    upddata = [ emcd_data.async_config_entry_first_refresh() ]
+    await emcd_data.async_config_entry_first_refresh()
     sensors = []
 
     for coin, balance in emcd_data.balances.items():
