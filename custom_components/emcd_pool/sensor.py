@@ -128,7 +128,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, balance = 0, total_paid = 0, min_payout = 0, address):
+    def __init__(self, coordinator, name, coin, username, address, balance = 0, total_paid = 0, min_payout = 0):
         super().__init__(coordinator)        
         
         """Initialize the sensor."""
@@ -387,7 +387,7 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
 class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, income = 0, rew_type, hashrate):
+    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income = 0, ):
         super().__init__(coordinator)
         
         """Initialize the sensor."""
@@ -466,7 +466,7 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
 class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, amount = 0, txid):
+    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, txid, amount = 0):
         super().__init__(coordinator)
         
         """Initialize the sensor."""
