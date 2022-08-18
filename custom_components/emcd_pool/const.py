@@ -1,6 +1,6 @@
 from typing import Final
 
-VERSION: Final = "2.0.9"
+VERSION: Final = "2.0.10"
 FLOW_VERSION = "1" 
 
 DOMAIN: Final = "emcd_pool"
