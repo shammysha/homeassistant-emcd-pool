@@ -3,13 +3,29 @@ import inspect
 import json
 import logging
 import os
-from typing import Dict, Final, Mapping, Optional, TYPE_CHECKING, Tuple, Type
+from typing import (
+    Optional
+)
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import callback
-from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.const import CONF_USERNAME
-from .const import DOMAIN
+from homeassistant.config_entries import (
+    ConfigEntry
+)
+
+from homeassistant.core import (
+    callback
+)
+
+from homeassistant.helpers.typing import (
+    HomeAssistantType
+)
+
+from homeassistant.const import (
+    CONF_USERNAME
+)
+
+from .const import (
+    DOMAIN
+)
 
 @callback
 async def find_existing_entry(hass: HomeAssistantType, api_key: str, username: str = None) -> Optional[ConfigEntry]:
@@ -44,4 +60,3 @@ async def async_fetch_username(api_key: str):
         await client.close_connection()        
     
     return username 
-        

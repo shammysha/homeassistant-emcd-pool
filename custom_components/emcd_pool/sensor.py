@@ -136,9 +136,9 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
         self._name = f"{name} {username} ({coin}) info"
         self._coin = coin
         self._username = username
-        self._balance = balance
-        self._total_paid = total_paid
-        self._min_payout = min_payout
+        self._balance = float(balance)
+        self._total_paid = float(total_paid)
+        self._min_payout = float(min_payout)
         self._address = address
         self._unit_of_measurement = coin
         self._state = None
@@ -175,9 +175,9 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
 
         data = {
             ATTR_ATTRIBUTION: ATTRIBUTION,
-            ATTR_BALANCE: "{:.8f}".format(float(self._balance)),
-            ATTR_TOTAL_PAID: "{:.8f}".format(float(self._total_paid)),
-            ATTR_MIN_PAYOUT: "{:.8f}".format(float(self._min_payout)),            
+            ATTR_BALANCE: "{:.8f}".format(self._balance),
+            ATTR_TOTAL_PAID: "{:.8f}".format(self._total_paid),
+            ATTR_MIN_PAYOUT: "{:.8f}".format(self._min_payout),            
             ATTR_PAYOUT_ADDRESS: f"{self._address}",
             ATTR_COIN: f"{self._coin}",
             ATTR_ACCOUNT: f"{self._username}"             
@@ -193,10 +193,10 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
         self._address = ''        
         
         if self._coin in self._coordinator.balances:
-            self._balance = float(self._coordinator.balances[self._coin]['balance'] or 0)
-            self._total_paid = float(self._coordinator.balances[self._coin]['balance'] or 0)
-            self._min_payout = float(self._coordinator.balances[self._coin]['balance'] or 0)
-            self._address = (self._coordinator.balances[self._coin]['balance'] or '')                
+            self._balance = float(self._coordinator.balances[self._coin].get('balance', 0.00))
+            self._total_paid = float(self._coordinator.balances[self._coin].get('total_paid', 0.00))
+            self._min_payout = float(self._coordinator.balances[self._coin].get('min_payout', 0.00))
+            self._address = self._coordinator.balances[self._coin].get('address', '')                
          
         self._state = float(self._balance)     
  
@@ -387,7 +387,7 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
 class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income = 0, ):
+    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income = 0):
         super().__init__(coordinator)
         
         """Initialize the sensor."""
@@ -397,7 +397,7 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
         self._username = username
         self._timestamp = timestamp
         self._gmt_time = gmt_time
-        self._income = income
+        self._income = float(income)
         self._type = rew_type
         self._hashrate = hashrate
         self._unit_of_measurement = coin
@@ -436,7 +436,7 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
 
         data = {
             ATTR_ATTRIBUTION: ATTRIBUTION,
-            ATTR_REWARDS_INCOME: "{:.8f}".format(float(self._income)),
+            ATTR_REWARDS_INCOME: "{:.8f}".format(self._income),
             ATTR_REWARDS_HASHRATE: f"{self._hashrate}",
             ATTR_REWARDS_TYPE: f"{self._type}",
             ATTR_TIMESTAMP: f"{self._timestamp}",
@@ -455,18 +455,18 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
         if self._coin in self._coordinator.rewards:
             self._timestamp = self._coordinator.rewards[self._coin].get('timestamp', None)
             self._gmt_time = self._coordinator.rewards[self._coin].get('gmt_time', None)
-            self._income = self._coordinator.rewards[self._coin].get('income', 0.00)
+            self._income = float(self._coordinator.rewards[self._coin].get('income', 0.00))
             self._type = self._coordinator.rewards[self._coin].get('type', None)
             self._hashrate = self._coordinator.rewards[self._coin].get('total_hashrate', 0)
          
-        self._state = float(self._income)             
+        self._state = self._income             
         
         self.async_write_ha_state()
         
 class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, txid, amount = 0):
+    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, txid, amount = 0.00):
         super().__init__(coordinator)
         
         """Initialize the sensor."""
@@ -476,7 +476,7 @@ class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
         self._username = username
         self._timestamp = timestamp
         self._gmt_time = gmt_time
-        self._amount = amount
+        self._amount = float(amount)
         self._txid = txid
         self._unit_of_measurement = coin
         self._state = None
@@ -514,7 +514,7 @@ class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
 
         data = {
             ATTR_ATTRIBUTION: ATTRIBUTION,
-            ATTR_PAYOUTS_AMOUNT: "{:.8f}".format(float(self._amount)),
+            ATTR_PAYOUTS_AMOUNT: "{:.8f}".format(self._amount),
             ATTR_PAYOUTS_TXID: f"{self._txid}",
             ATTR_TIMESTAMP: f"{self._timestamp}",
             ATTR_DATETIME: f"{self._gmt_time}",
@@ -531,9 +531,9 @@ class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
         if self._coin in self._coordinator.payouts:
             self._timestamp = self._coordinator.payouts[self._coin].get('timestamp', None)
             self._gmt_time = self._coordinator.payouts[self._coin].get('gmt_time', None)
-            self._amount = self._coordinator.payouts[self._coin].get('amount', 0.00)
+            self._amount = float(self._coordinator.payouts[self._coin].get('amount', 0.00))
             self._txid = self._coordinator.payouts[self._coin].get('txid', None)                
 
-        self._state = float(self._amount)      
+        self._state = self._amount      
         
         self.async_write_ha_state()          
