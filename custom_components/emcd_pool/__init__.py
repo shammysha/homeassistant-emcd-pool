@@ -94,12 +94,12 @@ async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
     
 async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) -> bool:   
     entry_id = config_entry.entry_id
-    api_key = config_entry[DOMAIN][CONF_API_KEY]
+    api_key = config_entry.data[CONF_API_KEY]
     
     _LOGGER.debug(f'config_entry.data: {config_entry.data}')
     
     try:
-        username = config_entry[DOMAIN][CONF_USERNAME]
+        username = config_entry.data[CONF_USERNAME]
     except (TypeError, ValueError, LookupError):
         username = await async_fetch_username(api_key)
         if not username:
