@@ -128,7 +128,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, address, balance = 0, total_paid = 0, min_payout = 0):
+    def __init__(self, coordinator, name, coin, username, address, balance, total_paid, min_payout):
         super().__init__(coordinator)        
         
         """Initialize the sensor."""
@@ -136,9 +136,9 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
         self._name = f"{name} {username} ({coin}) info"
         self._coin = coin
         self._username = username
-        self._balance = float(balance)
-        self._total_paid = float(total_paid)
-        self._min_payout = float(min_payout)
+        self._balance = float(balance or 0.00)
+        self._total_paid = float(total_paid or 0.00)
+        self._min_payout = float(min_payout or 0.00)
         self._address = address
         self._unit_of_measurement = coin
         self._state = None
@@ -387,7 +387,7 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
 class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income = 0):
+    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income):
         super().__init__(coordinator)
         
         """Initialize the sensor."""
@@ -397,7 +397,7 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
         self._username = username
         self._timestamp = timestamp
         self._gmt_time = gmt_time
-        self._income = float(income)
+        self._income = float(income or 0.00)
         self._type = rew_type
         self._hashrate = hashrate
         self._unit_of_measurement = coin
@@ -466,7 +466,7 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
 class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, txid, amount = 0.00):
+    def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, txid, amount):
         super().__init__(coordinator)
         
         """Initialize the sensor."""
@@ -476,7 +476,7 @@ class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
         self._username = username
         self._timestamp = timestamp
         self._gmt_time = gmt_time
-        self._amount = float(amount)
+        self._amount = float(amount or 0.00)
         self._txid = txid
         self._unit_of_measurement = coin
         self._state = None

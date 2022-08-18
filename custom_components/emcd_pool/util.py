@@ -60,3 +60,13 @@ async def async_fetch_username(api_key: str):
         await client.close_connection()        
     
     return username 
+        
+def float_or_none(value: str, printf: str = None) -> Optional[float]:
+    if value.strip().lower() in ("none", "null", "nil"):
+        return None
+    
+    if format:
+        return printf.format(float(value))
+    else:
+        return float(value)
+         

@@ -224,8 +224,6 @@ class EMCDData(DataUpdateCoordinator):
         try:
             balances = await self.client.async_get_info()
         
-            _LOGGER.debug(f"EMCD Balances: {balances}")
-                
             if not balances:
                 raise ConfigEntryAuthFailed(f'No data found for current API key')
     
