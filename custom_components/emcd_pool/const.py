@@ -1,6 +1,6 @@
 from typing import Final
 
-VERSION: Final = "2.0.18"
+VERSION: Final = "2.0.19"
 FLOW_VERSION = "1" 
 
 DOMAIN: Final = "emcd_pool"
@@ -67,7 +67,7 @@ COIN_ICONS: Final = {
 }
 COIN_EMCD: Final = {
     'bitcoin': 'btc',
-    'bitcoin_cash': 'btc',
+    'bitcoin_cash': 'bch',
     'bitcoin_sv': 'bsv',
     'litecoin': 'ltc'     
 }

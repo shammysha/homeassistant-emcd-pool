@@ -139,7 +139,7 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
         self._balance = float(balance or 0.00)
         self._total_paid = float(total_paid or 0.00)
         self._min_payout = float(min_payout or 0.00)
-        self._address = address
+        self._address = (address or '')
         self._unit_of_measurement = coin
         self._state = None
 
