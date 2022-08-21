@@ -226,11 +226,11 @@ class EMCDBalanceSensor(EMCDSensorEntity):
         self._min_payout = 0
         self._address = ''        
         
-        if self._coin in self._coordinator.balances:
-            self._balance = float(self._coordinator.balances[self._coin].get('balance') or 0.00)
-            self._total_paid = float(self._coordinator.balances[self._coin].get('total_paid') or 0.00)
-            self._min_payout = float(self._coordinator.balances[self._coin].get('min_payout') or 0.00)
-            self._address = (self._coordinator.balances[self._coin].get('address') or '')                
+        if self._coin in self.coordinator.balances:
+            self._balance = float(self.coordinator.balances[self._coin].get('balance') or 0.00)
+            self._total_paid = float(self.coordinator.balances[self._coin].get('total_paid') or 0.00)
+            self._min_payout = float(self.coordinator.balances[self._coin].get('min_payout') or 0.00)
+            self._address = (self.coordinator.balances[self._coin].get('address') or '')                
          
         self._state = float(self._balance)     
  
@@ -297,17 +297,17 @@ class EMCDStatusSensor(EMCDSensorEntity):
         self._invalid_workers = 0
         self._inactive_workers = 0       
         
-        if self._coin in self._coordinator.mining:
-            if 'status' in self._coordinator.mining[self._coin]:
-                self._all_workers = self._coordinator.mining[self._coin]['status'].get('all', 0)
-                self._valid_workers = self._coordinator.mining[self._coin]['status'].get('active', 0)
-                self._invalid_workers = self._coordinator.mining[self._coin]['status'].get('dead_count', 0)
-                self._inactive_workers = self._coordinator.mining[self._coin]['status'].get('inactive', 0)                      
+        if self._coin in self.coordinator.mining:
+            if 'status' in self.coordinator.mining[self._coin]:
+                self._all_workers = self.coordinator.mining[self._coin]['status'].get('all', 0)
+                self._valid_workers = self.coordinator.mining[self._coin]['status'].get('active', 0)
+                self._invalid_workers = self.coordinator.mining[self._coin]['status'].get('dead_count', 0)
+                self._inactive_workers = self.coordinator.mining[self._coin]['status'].get('inactive', 0)                      
                 
-            if 'hashrate' in self._coordinator.mining[self._coin]:
-                self._hrate = self._coordinator.mining[self._coin]['hashrate'].get('hashrate', 0)
-                self._hrate1h = self._coordinator.mining[self._coin]['hashrate'].get('hashrate1h', 0)
-                self._hrate24h = self._coordinator.mining[self._coin]['hashrate'].get('hashrate24h', 0)
+            if 'hashrate' in self.coordinator.mining[self._coin]:
+                self._hrate = self.coordinator.mining[self._coin]['hashrate'].get('hashrate', 0)
+                self._hrate1h = self.coordinator.mining[self._coin]['hashrate'].get('hashrate1h', 0)
+                self._hrate24h = self.coordinator.mining[self._coin]['hashrate'].get('hashrate24h', 0)
          
         self._state = self._hrate 
  
@@ -372,9 +372,9 @@ class EMCDWorkerSensor(EMCDSensorEntity):
         self._hrate24h = 0
         self._active = 0
         
-        if self._coin in self._coordinator.mining:
-            if 'workers' in self._coordinator.mining[self._coin]:
-                for worker in self._coordinator.mining[self._coin]['workers']:
+        if self._coin in self.coordinator.mining:
+            if 'workers' in self.coordinator.mining[self._coin]:
+                for worker in self.coordinator.mining[self._coin]['workers']:
                     if self._worker == worker['worker']:
                         self._hrate = worker.get('hashrate', 0)
                         self._hrate1h = worker.get('hashrate1h', 0)
@@ -439,12 +439,12 @@ class EMCDRewardsSensor(EMCDSensorEntity):
         self._income = 0.00
         self._hashrate = 0
 
-        if self._coin in self._coordinator.rewards:
-            self._timestamp = self._coordinator.rewards[self._coin].get('timestamp', None)
-            self._gmt_time = self._coordinator.rewards[self._coin].get('gmt_time', None)
-            self._income = float(self._coordinator.rewards[self._coin].get('income', 0.00))
-            self._type = self._coordinator.rewards[self._coin].get('type', None)
-            self._hashrate = self._coordinator.rewards[self._coin].get('total_hashrate', 0)
+        if self._coin in self.coordinator.rewards:
+            self._timestamp = self.coordinator.rewards[self._coin].get('timestamp', None)
+            self._gmt_time = self.coordinator.rewards[self._coin].get('gmt_time', None)
+            self._income = float(self.coordinator.rewards[self._coin].get('income', 0.00))
+            self._type = self.coordinator.rewards[self._coin].get('type', None)
+            self._hashrate = self.coordinator.rewards[self._coin].get('total_hashrate', 0)
          
         self._state = self._income             
         
@@ -498,11 +498,11 @@ class EMCDPayoutsSensor(EMCDSensorEntity):
     def _handle_coordinator_update(self) -> None:        
         self._amount = 0.00
         
-        if self._coin in self._coordinator.payouts:
-            self._timestamp = self._coordinator.payouts[self._coin].get('timestamp', None)
-            self._gmt_time = self._coordinator.payouts[self._coin].get('gmt_time', None)
-            self._amount = float(self._coordinator.payouts[self._coin].get('amount') or 0.00)
-            self._txid = self._coordinator.payouts[self._coin].get('txid', None)                
+        if self._coin in self.coordinator.payouts:
+            self._timestamp = self.coordinator.payouts[self._coin].get('timestamp', None)
+            self._gmt_time = self.coordinator.payouts[self._coin].get('gmt_time', None)
+            self._amount = float(self.coordinator.payouts[self._coin].get('amount') or 0.00)
+            self._txid = self.coordinator.payouts[self._coin].get('txid', None)                
 
         self._state = self._amount      
         
