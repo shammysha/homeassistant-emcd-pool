@@ -1,4 +1,5 @@
 import logging
+import homeassistant.helpers.entity_registry as er
 
 from asyncio import (
     gather
@@ -51,15 +52,12 @@ from .schemas import (
 )
 
 from .const import (
-    VERSION,
     FLOW_VERSION,
     DOMAIN, 
     DEFAULT_NAME, 
     SCAN_INTERVAL, 
     COIN_EMCD
 )
-
-__version__ = VERSION
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -175,12 +173,34 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
         'sensors': sensors
     }   
 
+    config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
+
     if sensors:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(config_entry, "sensor")
         )
 
     return True
+
+
+async def async_unload_entry(hass, config_entry: ConfigEntry) -> None:
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]['coordinator']
+    
+    unload_ops = [
+        hass.config_entries.async_forward_entry_unload(config_entry, "sensor"),
+        coordinator.client.close_connection()
+    ]
+
+    onload_ok = all( [ await gather(*unload_ops) ] )
+    if onload_ok:
+        ent_reg = er.async_get(hass)
+        for entity in er.async_entries_for_config_entry(ent_reg, config_entry.entry_id):
+            if entity.entity_id.startswith('sensor'):
+                ent_reg.async_remove(entity.entity_id)
+    
+        hass.data[DOMAIN].pop(config_entry.entry_id)
+
+    return onload_ok   
 
 async def async_reload_entry(hass, config_entry: ConfigEntry) -> None:
     _LOGGER.info(f"[{config_entry.data[CONF_USERNAME]}] Reloading configuration entry")

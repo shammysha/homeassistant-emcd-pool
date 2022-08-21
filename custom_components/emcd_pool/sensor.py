@@ -123,17 +123,62 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             )        
 
         if sensor:
-            async_add_entities([sensor], True)
+            async_add_entities([sensor], False)
+            
 
-class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
+class EMCDSensorEntity(CoordinatorEntity, SensorEntity):
+    def __init__(self, coordinator:CoordinatorEntity, name:str):
+        super().__init__(coordinator = coordinator)
+        
+        self._name = name
+        self._state = None
+        
+    @property
+    def unique_id(self):
+        return slugify(text = self._name, separator = '-')
+    
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return self._name
+    
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+
+        return self._state
+    
+    @property
+    def unit_of_measurement(self):
+        raise Exception('Unimplemented')
+
+    @property
+    def icon(self):
+        raise Exception('Unimplemented')
+
+    @property
+    def extra_state_attributes(self):
+        raise Exception('Unimplemented')
+    
+    async def async_added_to_hass(self):
+        self._handle_coordinator_update()    
+        
+        self.async_on_remove(
+            self.coordinator.async_add_listener(
+                self._handle_coordinator_update, self.coordinator_context
+            )
+        )        
+    
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        raise Exception('Unimplemented')
+    
+    
+class EMCDBalanceSensor(EMCDSensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, address, balance, total_paid, min_payout):
-        super().__init__(coordinator)        
-        
         """Initialize the sensor."""
-        self._coordinator = coordinator
-        self._name = f"{name} {username} ({coin}) info"
         self._coin = coin
         self._username = username
         self._balance = float(balance or 0.00)
@@ -141,22 +186,11 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
         self._min_payout = float(min_payout or 0.00)
         self._address = (address or '')
         self._unit_of_measurement = coin
-        self._state = None
 
-    @property
-    def unique_id(self):
-        return slugify(text = self._name, separator = '-')
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-
-        return self._state
+        super().__init__(
+            coordinator = coordinator, 
+            name = f"{name} {username} ({coin}) info"
+        )
 
     @property
     def unit_of_measurement(self):
@@ -202,15 +236,11 @@ class EMCDBalanceSensor(CoordinatorEntity, SensorEntity):
  
         self.async_write_ha_state()
  
-class EMCDStatusSensor(CoordinatorEntity, SensorEntity):
+class EMCDStatusSensor(EMCDSensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, status, hashrate):
-        super().__init__(coordinator)        
-        
         """Initialize the sensor."""
-        self._coordinator = coordinator
-        self._name = f"{name} {username} ({coin}) status"
         self._coin = coin
         self._username = username
         self._hrate = hashrate.get('hashrate', 0)
@@ -221,22 +251,11 @@ class EMCDStatusSensor(CoordinatorEntity, SensorEntity):
         self._invalid_workers = status.get('dead_count', 0)
         self._inactive_workers = status.get('inactive', 0)
         self._unit_of_measurement = "H/s"
-        self._state = None
 
-    @property
-    def unique_id(self):
-        return slugify(text = self._name, separator = '-')
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-
-        return self._state
+        super().__init__(
+            coordinator = coordinator, 
+            name = f"{name} {username} ({coin}) status"
+        )
 
     @property
     def unit_of_measurement(self):
@@ -294,15 +313,11 @@ class EMCDStatusSensor(CoordinatorEntity, SensorEntity):
  
         self.async_write_ha_state()
  
-class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
+class EMCDWorkerSensor(EMCDSensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, worker, hashrate, hashrate1h, hashrate24h, active):
-        super().__init__(coordinator)
-        
         """Initialize the sensor."""
-        self._coordinator = coordinator
-        self._name = f"{name} {username}.{worker} ({coin}) worker"
         self._coin = coin
         self._username = username
         self._worker = worker
@@ -311,26 +326,13 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
         self._hrate24h = hashrate24h
         self._active = (active or 0)
         self._unit_of_measurement = "H/s"
-        self._state = None
-
         self._status_vars = ["inactive", "valid"]
         self._status_icons = ["mdi:server-network-off", "mdi:server-network"]
 
-
-    @property
-    def unique_id(self):
-        return slugify(text = self._name, separator = '-')
-    
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-
-        return self._state
+        super().__init__(
+            coordinator = coordinator, 
+            name = f"{name} {username}.{worker} ({coin}) worker"
+        )
 
     @property
     def unit_of_measurement(self):
@@ -384,15 +386,11 @@ class EMCDWorkerSensor(CoordinatorEntity, SensorEntity):
         
         self.async_write_ha_state()
         
-class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
+class EMCDRewardsSensor(EMCDSensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income):
-        super().__init__(coordinator)
-        
         """Initialize the sensor."""
-        self._coordinator = coordinator
-        self._name = f"{name} {username} ({coin}) rewards"
         self._coin = coin
         self._username = username
         self._timestamp = timestamp
@@ -401,24 +399,13 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
         self._type = rew_type
         self._hashrate = hashrate
         self._unit_of_measurement = coin
-        self._state = None
 
-
-    @property
-    def unique_id(self):
-        return slugify(text = self._name, separator = '-')
-    
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-
-        return self._state
-
+        super().__init__(
+            coordinator = coordinator, 
+            name = f"{name} {username} ({coin}) rewards"
+        )
+        
+        
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement this sensor expresses itself in."""
@@ -463,15 +450,10 @@ class EMCDRewardsSensor(CoordinatorEntity, SensorEntity):
         
         self.async_write_ha_state()
         
-class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
+class EMCDPayoutsSensor(EMCDSensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, txid, amount):
-        super().__init__(coordinator)
-        
-        """Initialize the sensor."""
-        self._coordinator = coordinator
-        self._name = f"{name} {username} ({coin}) payouts"
         self._coin = coin
         self._username = username
         self._timestamp = timestamp
@@ -479,23 +461,11 @@ class EMCDPayoutsSensor(CoordinatorEntity, SensorEntity):
         self._amount = float(amount or 0.00)
         self._txid = txid
         self._unit_of_measurement = coin
-        self._state = None
 
-    
-    @property
-    def unique_id(self):
-        return slugify(text = self._name, separator = '-')
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-
-        return self._state
+        super().__init__(
+            coordinator = coordinator, 
+            name = f"{name} {username} ({coin}) payouts"
+        )
 
     @property
     def unit_of_measurement(self):
