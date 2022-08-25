@@ -133,10 +133,11 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
             })
         
             for worker in mining['workers']:
-                sensors.append(worker.update({
+                worker.update({
                     'username': username,
                     'coin': coin
-                }))
+                })
+                sensors.append(worker)
 
 
         if reward := emcd_data.rewards.get(coin, None):
@@ -266,21 +267,21 @@ class EMCDData(DataUpdateCoordinator):
                         'hashrate': workers['total_hashrate'],
                         'workers': workers['details']
                     }
-                    _LOGGER.debug(f"Workers updated from emcd.io")
+                    _LOGGER.debug(f"[{coin}] Workers updated from emcd.io")
     
                 self.rewards[coin] = {}
                 if rewards and (reward := rewards.get('income', None)):
                     if len(reward) > 0:
                         self.rewards[coin] = reward[0]
                         
-                    _LOGGER.debug(f"Rewards updated from emcd.io")
+                    _LOGGER.debug(f"[{coin}] Rewards updated from emcd.io")
     
                 self.payouts[coin] = {}
                 if payouts and (payout := payouts.get('payouts', None)):
                     if len(payout) > 0:
                         self.payouts[coin] = payout[0]
 
-                    _LOGGER.debug(f"Payouts updated from emcd.io")
+                    _LOGGER.debug(f"[{coin}] Payouts updated from emcd.io")
         
         except EMCDAPIException as e:  
             await self.client.close_connection()  
