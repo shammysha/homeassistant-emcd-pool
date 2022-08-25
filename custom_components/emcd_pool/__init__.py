@@ -124,7 +124,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
 
         sensors.append(balance)
 
-        if coin in emcd_data.mining:
+        if coin in emcd_data.mining.keys():
             status = {
                 'username': emcd_data.username,
                 'coin': coin,
@@ -142,7 +142,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
                 sensors.append(worker)
 
 
-        if coin in emcd_data.rewards:
+        if coin in emcd_data.rewards.keys():
             rewards = {
                 'username': username,
                 'coin': coin,
@@ -155,7 +155,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
             
             sensors.append(rewards)
                 
-        if coin in emcd_data.payouts:
+        if coin in emcd_data.payouts.keys():
             payouts = {
                 'username': username,
                 'coin': coin,
