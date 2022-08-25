@@ -269,14 +269,14 @@ class EMCDData(DataUpdateCoordinator):
                     _LOGGER.debug(f"Workers updated from emcd.io")
     
                 self.rewards[coin] = {}
-                if rewards and reward := rewards.get('income', None):
+                if rewards and (reward := rewards.get('income', None)):
                     if len(reward) > 0:
                         self.rewards[coin] = reward[0]
                         
                     _LOGGER.debug(f"Rewards updated from emcd.io")
     
                 self.payouts[coin] = {}
-                if payouts and payout := payouts.get('payouts', None):
+                if payouts and (payout := payouts.get('payouts', None)):
                     if len(payout) > 0:
                         self.payouts[coin] = payout[0]
 
