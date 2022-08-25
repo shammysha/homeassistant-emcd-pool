@@ -5,7 +5,7 @@
   "issue_tracker": "https://github.com/shammysha/homeassistant-emcd-pool/issues",
   "dependencies": [],
   "config_flow": true,
-  "version": "v2.0.24",
+  "version": "v2.0.30",
   "codeowners": [
     "@shammysha"
   ]

@@ -124,48 +124,41 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
 
         sensors.append(balance)
 
-        if coin in emcd_data.mining:
-            status = {
+        if mining := emcd_data.mining.get(coin, None):
+            sensors.append({
                 'username': emcd_data.username,
                 'coin': coin,
-                'status': emcd_data.mining[coin]['status'],
-                'hashrate': emcd_data.mining[coin]['hashrate']
-            }
-            
-            sensors.append(status)
-                
+                'status': mining['status'],
+                'hashrate': mining['hashrate']
+            })
         
-            for worker in emcd_data.mining[coin]['workers']:
-                worker['username'] = username
-                worker['coin'] = coin
+            for worker in mining['workers']:
+                sensors.append(worker.update({
+                    'username': username,
+                    'coin': coin
+                }))
 
-                sensors.append(worker)
 
-
-        if coin in emcd_data.rewards:
-            rewards = {
+        if reward := emcd_data.rewards.get(coin, None):
+            sensors.append({
                 'username': username,
                 'coin': coin,
-                'timestamp': emcd_data.rewards[coin].get('timestamp', None),
-                'gmt_time': emcd_data.rewards[coin].get('gmt_time', None),
-                'income': emcd_data.rewards[coin].get('income', None),
-                'type': emcd_data.rewards[coin].get('type', None),
-                'hashrate': emcd_data.rewards[coin].get('total_hashrate', None)
-            }
-            
-            sensors.append(rewards)
+                'timestamp': reward.get('timestamp', None),
+                'gmt_time': reward.get('gmt_time', None),
+                'income': reward.get('income', None),
+                'type': reward.get('type', None),
+                'hashrate': reward.get('total_hashrate', None)
+            })
                 
-        if coin in emcd_data.payouts:
-            payouts = {
+        if payout := emcd_data.payouts.get(coin, None):
+            sensors.append({
                 'username': username,
                 'coin': coin,
-                'timestamp': emcd_data.payouts[coin].get('timestamp', None),
-                'gmt_time': emcd_data.payouts[coin].get('gmt_time', None),
-                'amount': emcd_data.payouts[coin].get('amount', None),
-                'txid': emcd_data.payouts[coin].get('txid', None)
-            }
-            
-            sensors.append(payouts)
+                'timestamp': payout.get('timestamp', None),
+                'gmt_time': payout.get('gmt_time', None),
+                'amount': payout.get('amount', None),
+                'txid': payout.get('txid', None)
+            })
 
     hass.data.setdefault(DOMAIN, {})[entry_id] = {
         'config': config,
@@ -273,23 +266,22 @@ class EMCDData(DataUpdateCoordinator):
                         'hashrate': workers['total_hashrate'],
                         'workers': workers['details']
                     }
-    
                     _LOGGER.debug(f"Workers updated from emcd.io")
     
                 self.rewards[coin] = {}
-                if rewards and 'income' in rewards:
-                    if len(rewards['income']) > 0:
-                        self.rewards[coin] = rewards['income'][0]
-    
+                if rewards and (reward := rewards.get('income', None)):
+                    if len(reward) > 0:
+                        self.rewards[coin] = reward[0]
+                        
                     _LOGGER.debug(f"Rewards updated from emcd.io")
     
                 self.payouts[coin] = {}
-                if payouts and 'payouts' in payouts:
-                    if len(payouts['payouts']) > 0:
-                        self.payouts[coin] = payouts['payouts'][0]
-    
-                    _LOGGER.debug(f"Payouts updated from emcd.io")
+                if payouts and (payout := payouts.get('payouts', None)):
+                    if len(payout) > 0:
+                        self.payouts[coin] = payout[0]
 
+                    _LOGGER.debug(f"Payouts updated from emcd.io")
+        
         except EMCDAPIException as e:  
             await self.client.close_connection()  
             raise UpdateFailed from e
