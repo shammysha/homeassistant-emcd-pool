@@ -74,7 +74,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             )
 
             
-        elif all(i in sensor_data for i in ['name', 'coin', 'username', 'status', 'hashrate']):
+        elif all(i in sensor_data for i in ['coin', 'username', 'status', 'hashrate']):
             sensor = EMCDStatusSensor(
                 name = DEFAULT_NAME,
                 coordinator = coordinator,
@@ -84,7 +84,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 hashrate = sensor_data['hashrate']
             )
             
-        elif all(i in sensor_data for i in ['name', 'coin', 'username', 'worker', 'hashrate', 'hashrate1h', 'hashrate24h', 'active']):
+        elif all(i in sensor_data for i in ['coin', 'username', 'worker', 'hashrate', 'hashrate1h', 'hashrate24h', 'active']):
             sensor = EMCDWorkerSensor(
                 name = DEFAULT_NAME,
                 coordinator = coordinator,
@@ -97,7 +97,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 active = sensor_data['active']
             )
     
-        elif all(i in sensor_data for i in ['name', 'coin', 'username', 'timestamp', 'gmt_time', 'income', 'type', 'hashrate' ]):
+        elif all(i in sensor_data for i in ['coin', 'username', 'timestamp', 'gmt_time', 'income', 'type', 'hashrate' ]):
             sensor = EMCDRewardsSensor(
                 name = DEFAULT_NAME,
                 coordinator = coordinator,
@@ -110,7 +110,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 hashrate = sensor_data['hashrate']
             )
                     
-        elif all(i in sensor_data for i in ['name', 'coin', 'username', 'timestamp', 'gmt_time', 'amount', 'txid' ]):
+        elif all(i in sensor_data for i in ['coin', 'username', 'timestamp', 'gmt_time', 'amount', 'txid' ]):
             sensor = EMCDPayoutsSensor(
                 name = DEFAULT_NAME,
                 coordinator = coordinator,           
