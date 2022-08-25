@@ -125,17 +125,18 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry: ConfigEntry) 
         sensors.append(balance)
 
         if mining := emcd_data.mining.get(coin, None):
+            _LOGGER.debug(f"Mining is: {mining}")    
             status = {
                 'username': emcd_data.username,
                 'coin': coin,
                 'status': mining['status'],
                 'hashrate': mining['hashrate']
             }
-            
+            _LOGGER.debug(f"Status is: {status}")            
             sensors.append(status)
-                
         
             for worker in mining['workers']:
+                _LOGGER.debug(f"worker is: {worker}")                
                 worker['username'] = username
                 worker['coin'] = coin
 
@@ -273,7 +274,7 @@ class EMCDData(DataUpdateCoordinator):
                         'hashrate': workers['total_hashrate'],
                         'workers': workers['details']
                     }
-                    _LOGGER.debug(f"Workers for {coin}: {self.mining}")    
+                    _LOGGER.debug(f"Workers for {coin}: {self.mining[coin]}")    
                     _LOGGER.debug(f"Workers updated from emcd.io")
     
                 self.rewards[coin] = {}
@@ -281,15 +282,15 @@ class EMCDData(DataUpdateCoordinator):
                     if len(rewards['income']) > 0:
                         self.rewards[coin] = rewards['income'][0]
     
-                    _LOGGER.debug(f"Rewards for {coin}: {self.rewards}")    
+                    _LOGGER.debug(f"Rewards for {coin}: {self.rewards[coin]}")    
                     _LOGGER.debug(f"Rewards updated from emcd.io")
     
                 self.payouts[coin] = {}
                 if payouts and 'payouts' in payouts:
                     if len(payouts['payouts']) > 0:
                         self.payouts[coin] = payouts['payouts'][0]
-    
-                    _LOGGER.debug(f"Payouts for {coin}: {self.payouts}")    
+
+                    _LOGGER.debug(f"Payouts for {coin}: {self.payouts[coin]}")    
                     _LOGGER.debug(f"Payouts updated from emcd.io")
 
         except EMCDAPIException as e:  
