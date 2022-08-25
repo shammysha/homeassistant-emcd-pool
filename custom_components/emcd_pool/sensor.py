@@ -63,21 +63,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
         elif all(i in sensor_data for i in ['coin', 'username', 'balance', 'total_paid', 'min_payout', 'address']):
             sensor = EMCDBalanceSensor(
-                name = DEFAULT_NAME,
                 coordinator = coordinator,
+                name = DEFAULT_NAME,
                 coin = sensor_data['coin'],
                 username = sensor_data['username'],
+                address = sensor_data['address'],
                 balance = sensor_data['balance'],
                 total_paid = sensor_data['total_paid'],
-                min_payout = sensor_data['min_payout'],
-                address = sensor_data['address']
+                min_payout = sensor_data['min_payout']
             )
-
             
         elif all(i in sensor_data for i in ['coin', 'username', 'status', 'hashrate']):
             sensor = EMCDStatusSensor(
-                name = DEFAULT_NAME,
                 coordinator = coordinator,
+                name = DEFAULT_NAME,
                 coin = sensor_data['coin'],
                 username = sensor_data['username'],
                 status = sensor_data['status'],
@@ -86,8 +85,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             
         elif all(i in sensor_data for i in ['coin', 'username', 'worker', 'hashrate', 'hashrate1h', 'hashrate24h', 'active']):
             sensor = EMCDWorkerSensor(
-                name = DEFAULT_NAME,
                 coordinator = coordinator,
+                name = DEFAULT_NAME,
                 coin = sensor_data['coin'],
                 username = sensor_data['username'],
                 worker = sensor_data['worker'],
@@ -99,27 +98,27 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     
         elif all(i in sensor_data for i in ['coin', 'username', 'timestamp', 'gmt_time', 'income', 'type', 'hashrate' ]):
             sensor = EMCDRewardsSensor(
-                name = DEFAULT_NAME,
                 coordinator = coordinator,
+                name = DEFAULT_NAME,
                 coin = sensor_data['coin'],
                 username = sensor_data['username'],
                 timestamp = sensor_data['timestamp'],
                 gmt_time = sensor_data['gmt_time'],
-                income = sensor_data['income'],
-                type = sensor_data['type'],
-                hashrate = sensor_data['hashrate']
+                rew_type = sensor_data['type'],
+                hashrate = sensor_data['hashrate'],
+                income = sensor_data['income']
             )
                     
         elif all(i in sensor_data for i in ['coin', 'username', 'timestamp', 'gmt_time', 'amount', 'txid' ]):
             sensor = EMCDPayoutsSensor(
+                coordinator = coordinator,
                 name = DEFAULT_NAME,
-                coordinator = coordinator,           
                 coin = sensor_data['coin'],
                 username = sensor_data['username'],
                 timestamp = sensor_data['timestamp'],
                 gmt_time = sensor_data['gmt_time'],
-                amount = sensor_data['amount'],
-                txid = sensor_data['txid']
+                txid = sensor_data['txid'],
+                amount = sensor_data['amount']
             )        
 
         if sensor:
