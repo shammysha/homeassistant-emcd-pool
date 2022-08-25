@@ -391,7 +391,7 @@ class EMCDRewardsSensor(EMCDSensorEntity):
 
     def __init__(self, coordinator, name, coin, username, timestamp, gmt_time, rew_type, hashrate, income):
         """Initialize the sensor."""
-        self._coin = coin
+        self._coin = coin.upper()
         self._username = username
         self._timestamp = timestamp
         self._gmt_time = gmt_time

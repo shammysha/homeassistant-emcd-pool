@@ -250,9 +250,9 @@ class EMCDData(DataUpdateCoordinator):
             self.rewards = {}
     
             for coin, data in balances.items():
-                coin = COIN_EMCD.get(coin, coin)
+                coin = COIN_EMCD.get(coin, coin).upper()
     
-                self.balances[coin.upper()] = data
+                self.balances[coin] = data
     
                 _LOGGER.debug(f"Balances updated from emcd.io")
     

@@ -96,6 +96,41 @@ class EMCDPoolClient:
         return await self.async_request_api(path)
 
     async def async_get_workers(self, coin, path: str = 'workers'):
+        return {
+            "total_count": {
+              "all": 3,
+              "active": 3,
+              "inactive": 0
+            },
+            "total_hashrate": {
+              "hashrate": 295548725546189,
+              "hashrate1h": 301647350041587,
+              "hashrate24h": 302284252332638
+            },
+            "details": [
+              {
+                "worker": "avalon",
+                "hashrate": 270215977642230,
+                "hashrate1h": 275219977228197,
+                "hashrate24h": 274618910871679,
+                "active": 1
+              },
+              {
+                "worker": "s9_1",
+                "hashrate": 11258999068426,
+                "hashrate1h": 14073748835533,
+                "hashrate24h": 13653491057805,
+                "active": 1
+              },
+              {
+                "worker": "s9_2",
+                "hashrate": 14073748835533,
+                "hashrate1h": 12353623977857,
+                "hashrate24h": 14011850403154,
+                "active": 1
+              }
+            ]
+        }
         return await self.async_request_api(path, coin)
 
     async def async_get_rewards(self, coin, path: str = 'income'):
