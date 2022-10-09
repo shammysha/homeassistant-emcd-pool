@@ -261,11 +261,11 @@ class EMCDData(DataUpdateCoordinator):
                 
                 workers, rewards, payouts = res
                 
-                if workers:
+                if workers: 
                     self.mining[coin] = {
-                        'status': workers['total_count'],
-                        'hashrate': workers['total_hashrate'],
-                        'workers': workers['details']
+                        'status': workers.get('total_count', None),
+                        'hashrate': workers.get('total_hashrate', None),
+                        'workers': workers.get('details', [])
                     }
                     _LOGGER.debug(f"[{coin}] Workers updated from emcd.io")
     
