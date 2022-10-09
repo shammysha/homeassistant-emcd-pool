@@ -58,6 +58,7 @@ from .const import (
     SCAN_INTERVAL, 
     COIN_EMCD
 )
+from cgitb import reset
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -258,30 +259,38 @@ class EMCDData(DataUpdateCoordinator):
                 ]
     
                 res = await gather(*tasks, return_exceptions=True)
-                
                 workers, rewards, payouts = res
                 
-                if workers: 
-                    self.mining[coin] = {
-                        'status': workers.get('total_count', None),
-                        'hashrate': workers.get('total_hashrate', None),
-                        'workers': workers.get('details', [])
-                    }
-                    _LOGGER.debug(f"[{coin}] Workers updated from emcd.io")
-    
-                self.rewards[coin] = {}
-                if rewards and (reward := rewards.get('income', None)):
-                    if len(reward) > 0:
-                        self.rewards[coin] = reward[0]
+                if isinstance(workers, Exception):
+                    _LOGGER.error('Catched Exception while fetching workers info for %s: %s', coin, str(workers))
+                else:
+                    if workers: 
+                        self.mining[coin] = {
+                            'status': workers.get('total_count', None),
+                            'hashrate': workers.get('total_hashrate', None),
+                            'workers': workers.get('details', [])
+                        }
+                        _LOGGER.debug(f"[{coin}] Workers updated from emcd.io")                    
+                
+                if isinstance(rewards, Exception):
+                    _LOGGER.error('Catched Exception while fetching rewards info for %s: %s', coin, str(rewards))
+                else:
+                    self.rewards[coin] = {}
+                    if rewards and (reward := rewards.get('income', None)):
+                        if len(reward) > 0:
+                            self.rewards[coin] = reward[0]
                         
-                    _LOGGER.debug(f"[{coin}] Rewards updated from emcd.io")
+                        _LOGGER.debug(f"[{coin}] Rewards updated from emcd.io")
     
-                self.payouts[coin] = {}
-                if payouts and (payout := payouts.get('payouts', None)):
-                    if len(payout) > 0:
-                        self.payouts[coin] = payout[0]
+                if isinstance(payouts, Exception):
+                    _LOGGER.error('Catched Exception while fetching payouts info for %s: %s', coin, str(payouts))
+                else:                
+                    self.payouts[coin] = {}
+                    if payouts and (payout := payouts.get('payouts', None)):
+                        if len(payout) > 0:
+                            self.payouts[coin] = payout[0]
 
-                    _LOGGER.debug(f"[{coin}] Payouts updated from emcd.io")
+                        _LOGGER.debug(f"[{coin}] Payouts updated from emcd.io")
         
         except EMCDAPIException as e:  
             await self.client.close_connection()  
